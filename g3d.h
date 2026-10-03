@@ -15,6 +15,7 @@ typedef struct g3d_init_s {
   const void * (*load_resource)(const char * name, const char * ext, unsigned * sz);
 } g3d_init_t;
 int g3d_init(const g3d_init_t * t);
+void g3d_deinit(void);
 
 typedef struct g3d_frame_render_s {
   void * ptr;
