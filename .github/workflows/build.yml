@@ -1,0 +1,17 @@
+name: build
+on: [push, pull_request]
+
+jobs:
+  build-osx:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: clang -o build build.c
+      - run: ./build
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: clang -o build.exe build.c
+      - run: .\build.exe
+
