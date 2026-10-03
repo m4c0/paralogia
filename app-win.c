@@ -628,6 +628,8 @@ static int d3d_resize(unsigned sw, unsigned sh) {
 
 static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
   switch (msg) {
+    int state = 0;
+
     case WM_DESTROY:
       PostQuitMessage(0);
       return 0;
@@ -640,6 +642,22 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
       return 0;
     case WM_LBUTTONUP:
       g3d_mouse_up(LOWORD(l_param), HIWORD(l_param));
+      return 0;
+
+    case WM_KEYDOWN:
+      if (HIWORD(l_param) & KF_REPEAT) return 0;
+      state = 1;
+
+    case WM_KEYUP:
+      switch (LOWORD(w_param)) {
+        case VK_LEFT:   g3d_key(g3d_key_left,   state); break;
+        case VK_RIGHT:  g3d_key(g3d_key_right,  state); break;
+        case VK_UP:     g3d_key(g3d_key_up,     state); break;
+        case VK_DOWN:   g3d_key(g3d_key_down,   state); break;
+        case VK_SPACE:  g3d_key(g3d_key_action, state); break;
+        case VK_ESCAPE: g3d_key(g3d_key_cancel, state); break;
+      }
+
       return 0;
 
     case WM_SIZE:
