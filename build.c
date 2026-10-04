@@ -52,7 +52,8 @@ int main() {
   RUN("clang", "-Wall", "-gdwarf", "-c", "-o", "app.o", "app-win.c");
 #endif
 
-  RUN("clang", "-o", EXE("hello"), "app.o");
+  RUN("clang", "-Wall", "-g", "-c", "-o", "test-battle.o", "test-battle.c");
+  RUN("clang", "-o", EXE("test-battle"), "app.o", "test-battle.o");
   return 0;
 }
 
