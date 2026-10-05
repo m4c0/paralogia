@@ -4,4 +4,5 @@ build
 *.exe
 *.metallib
 *.o
+*.res
 

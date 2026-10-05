@@ -65,11 +65,15 @@ int main() {
 
   RUN("clang", "-Wall", "-g", "-fmodules", "-c", "-o", "app.o", "app-osx.m");
 #elif _WIN32
-#define EXE(x) x".exe"
+#define EXE(x) x".exe", x".res"
   RUN("clang", "-Wall", "-gdwarf", "-c", "-o", "app.o", "app-win.c");
 #endif
 
   SHADER("test-battle-shader");
+
+#if _WIN32
+  RUN("llvm-rc", "/FO", "test-battle.res", "test-battle.rc");
+#endif
 
   RUN("clang", "-Wall", "-g", "-c", "-o", "test-battle.o", "test-battle.c");
   RUN("clang", "-o", EXE("test-battle"), "app.o", "test-battle.o");
