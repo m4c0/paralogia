@@ -7,6 +7,7 @@
 #  define IN
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
+#  define fract frac
 #elif METAL
 #  pragma clang diagnostic ignored "-Wmissing-prototypes"
 #  include <metal_stdlib>
@@ -36,13 +37,19 @@ VERTEX vs_out vs_main(uint vid VID) {
   float2 p = float2(vid & 1, (vid >> 1) & 1);
 
   vs_out res;
-  res.frag_pos = p;
-  res.pos = float4(p * 2 - 1, 0.0f, 1.0f);
+  res.frag_pos = p * 2 - 1;
+  res.pos = float4(res.frag_pos, 0.0f, 1.0f);
   return res;
 }
 
 FRAGMENT fs_out fs_main(vs_out vs IN) {
+  float2 p = vs.frag_pos;
+  p = p * 8;
+
+  p = fract(p);
+  float3 c = float3(p, 1);
+
   fs_out res;
-  res.colour = float4(vs.frag_pos * 0.5 + 0.5, 1, 1);
+  res.colour = float4(c, 1);
   return res;
 }
