@@ -22,19 +22,19 @@
 #  error Unsupported
 #endif
 
-struct vs2fs {
+struct vs_out {
   float4 pos POS;
 };
 struct fs_out {
   float4 colour TGT(0);
 };
 
-VERTEX vs2fs vs_main(uint vid VID) {
+VERTEX vs_out vs_main(uint vid VID) {
   float2 p = float2(vid & 1, (vid >> 1) & 1);
 
-  vs2fs stage_output;
-  stage_output.pos = float4(p * 2 - 1, 0.0f, 1.0f);
-  return stage_output;
+  vs_out res;
+  res.pos = float4(p * 2 - 1, 0.0f, 1.0f);
+  return res;
 }
 
 FRAGMENT fs_out fs_main() {
