@@ -71,6 +71,27 @@ static int d3d_debug() {
   return 0;
 }
 
+static int d3d_output_errors() {
+#ifdef DEBUG_INTERFACE
+  ID3D12InfoQueue * infoq;
+  COM_CHK(d3d_device, QueryInterface, &IID_ID3D12InfoQueue, (void **)&infoq);
+  int n = COM(infoq, GetNumStoredMessages);
+  for (int i = 0; i < n; i++) {
+    size_t sz = 0;
+    COM(infoq, GetMessage, i, NULL, &sz);
+
+    D3D12_MESSAGE * msg = malloc(sz); // Trusting MS sends the right size
+    COM_CHK(infoq, GetMessage, i, msg, &sz);
+    OutputDebugString(msg->pDescription);
+    OutputDebugString("\n");
+    free(msg);
+
+    MessageBox(NULL, msg->pDescription, "Unexpected Direct3D error", MB_ICONERROR);
+  }
+#endif
+  return 1;
+}
+
 static inline int d3d_enum_adapter_by_gpu(IDXGIFactory6 * f6, unsigned i) {
   return COM_OK(f6, EnumAdapterByGpuPreference, i, DXGI_GPU_PREFERENCE_UNSPECIFIED, &IID_IDXGIAdapter1, (void **)&d3d_adapter);
 }
@@ -276,7 +297,7 @@ static void * new_pipeline(void * ptr, const char * shader, unsigned bufs, unsig
   desc.BlendState.RenderTarget[0].LogicOp               = D3D12_LOGIC_OP_NOOP;
   desc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
   void * pso;
-  if (!COM_OK(d3d_device, CreateGraphicsPipelineState, &desc, &IID_ID3D12PipelineState, &pso)) return NULL;
+  if (!COM_OK(d3d_device, CreateGraphicsPipelineState, &desc, &IID_ID3D12PipelineState, &pso)) return (d3d_output_errors(), NULL);
 
   d3d_release(vs);
   d3d_release(ps);
