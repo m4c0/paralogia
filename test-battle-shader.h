@@ -7,10 +7,10 @@
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
 #elif METAL
-#pragma clang diagnostic ignored "-Wmissing-prototypes"
-#include <metal_stdlib>
-#include <simd/simd.h>
-using namespace metal;
+#  pragma clang diagnostic ignored "-Wmissing-prototypes"
+#  include <metal_stdlib>
+#  include <simd/simd.h>
+   using namespace metal;
 #  define LOC(n) [[user(loc##n)]]
 #  define TGT(n) [[color(n)]]
 #  define POS    [[position]]
