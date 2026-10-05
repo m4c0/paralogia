@@ -10,6 +10,16 @@ void g3d_deinit(void) {
 }
 
 int g3d_frame(const g3d_frame_t * t) {
+  g3d_frame_render_t rnd = {
+    .ptr       = t->ptr,
+    .pipeline  = g_ppl,
+    .buffers   = (g3d_buffer_t *[]) { 0 },
+    .samplers  = (g3d_sampler_t *[]) { 0 },
+    .textures  = (g3d_texture_t *[]) { 0 },
+    .instances = 1,
+  };
+  t->render(&rnd);
+
   return 0;
 }
 
