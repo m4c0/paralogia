@@ -1,5 +1,7 @@
 build
 *.app
+*.dxil
 *.exe
+*.metallib
 *.o
 
