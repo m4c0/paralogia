@@ -4,6 +4,7 @@
 #  define VID    : SV_VertexID
 #  define IID    : SV_InstanceID
 #  define TGT(n) : SV_Target##n
+#  define IN
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
 #elif METAL
@@ -16,6 +17,7 @@
 #  define POS    [[position]]
 #  define VID    [[vertex_id]]
 #  define IID    [[instance_id]]
+#  define IN     [[stage_in]]
 #  define VERTEX   vertex
 #  define FRAGMENT fragment
 #else
@@ -23,6 +25,7 @@
 #endif
 
 struct vs_out {
+  float2 frag_pos;
   float4 pos POS;
 };
 struct fs_out {
@@ -33,12 +36,13 @@ VERTEX vs_out vs_main(uint vid VID) {
   float2 p = float2(vid & 1, (vid >> 1) & 1);
 
   vs_out res;
+  res.frag_pos = p;
   res.pos = float4(p * 2 - 1, 0.0f, 1.0f);
   return res;
 }
 
-FRAGMENT fs_out fs_main() {
+FRAGMENT fs_out fs_main(vs_out vs IN) {
   fs_out res;
-  res.colour = float4(0.1, 0.2, 1, 1);
+  res.colour = float4(vs.frag_pos * 0.5 + 0.5, 1, 1);
   return res;
 }
