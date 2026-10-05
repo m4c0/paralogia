@@ -5,6 +5,7 @@
 #  define IID    : SV_InstanceID
 #  define TGT(n) : SV_Target##n
 #  define IN
+#  define BUF(...)
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
 #  define fract frac
@@ -19,6 +20,7 @@ using namespace metal;
 #  define VID    [[vertex_id]]
 #  define IID    [[instance_id]]
 #  define IN     [[stage_in]]
+#  define BUF(N, X) X [[buffer(N)]],
 #  define VERTEX   vertex
 #  define FRAGMENT fragment
 #else
@@ -53,7 +55,7 @@ VERTEX vs_out vs_main(uint vid VID) {
   return res;
 }
 
-FRAGMENT fs_out fs_main(vs_out vs IN) {
+FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = vs.frag_pos * b0[0].aspect;
   p = p * 8;
 
