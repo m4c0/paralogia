@@ -1,7 +1,10 @@
 #include "g3d.h"
 
+static g3d_pipeline_t * g_ppl;
+
 int g3d_init(const g3d_init_t * t) {
-  return 0;
+  g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 0, 0);
+  return g_ppl ? 0 : 1;
 }
 void g3d_deinit(void) {
 }

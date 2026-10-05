@@ -1,1 +1,1 @@
-test-battle-shader hlsl "test-battle-shader.dxil"
+test-battle-shader dxil "test-battle-shader.dxil"
