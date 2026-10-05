@@ -25,8 +25,8 @@
 #endif
 
 struct vs_out {
-  float2 frag_pos;
-  float4 pos POS;
+  float2 frag_pos LOC(0);
+  float4 pos      POS;
 };
 struct fs_out {
   float4 colour TGT(0);
