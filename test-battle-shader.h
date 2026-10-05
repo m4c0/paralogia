@@ -12,7 +12,7 @@
 #  pragma clang diagnostic ignored "-Wmissing-prototypes"
 #  include <metal_stdlib>
 #  include <simd/simd.h>
-   using namespace metal;
+using namespace metal;
 #  define LOC(n) [[user(loc##n)]]
 #  define TGT(n) [[color(n)]]
 #  define POS    [[position]]
@@ -22,7 +22,18 @@
 #  define VERTEX   vertex
 #  define FRAGMENT fragment
 #else
-#  error Unsupported
+typedef struct { float x, y; } float2;
+typedef struct { float x, y, z, w; } float4;
+#endif
+
+struct vs_in {
+  float2 aspect;
+  float p0, p1;
+};
+
+#if HLSL || METAL
+#if HLSL
+StructuredBuffer<vs_in> b0 : register(t0);
 #endif
 
 struct vs_out {
@@ -43,7 +54,7 @@ VERTEX vs_out vs_main(uint vid VID) {
 }
 
 FRAGMENT fs_out fs_main(vs_out vs IN) {
-  float2 p = vs.frag_pos;
+  float2 p = vs.frag_pos * b0[0].aspect;
   p = p * 8;
 
   p = fract(p);
@@ -53,3 +64,4 @@ FRAGMENT fs_out fs_main(vs_out vs IN) {
   res.colour = float4(c, 1);
   return res;
 }
+#endif
