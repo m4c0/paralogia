@@ -12,6 +12,7 @@
 #include <simd/simd.h>
 using namespace metal;
 #  define LOC(n) [[user(loc##n)]]
+#  define TGT(n) [[color(n)]]
 #  define POS    [[position]]
 #  define VID    [[vertex_id]]
 #  define IID    [[instance_id]]
