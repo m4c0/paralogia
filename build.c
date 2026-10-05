@@ -52,7 +52,9 @@ static char * dxc(void) {
       win_kit_version);
   return strdup(argv0);
 }
-#define SHADER(x) RUN(dxc(), "-D", "HLSL", "-T", "lib_6_3", x".h", "-Fo", x".dxil");
+#define SHADER(x) \
+  RUN(dxc(), "-D", "HLSL", "-T", "vs_5_0", "-E", "vs_main", x".h", "-Fo", x".vert.dxil"); \
+  RUN(dxc(), "-D", "HLSL", "-T", "ps_5_0", "-E", "fs_main", x".h", "-Fo", x".frag.dxil");
 #endif
 
 int main() {

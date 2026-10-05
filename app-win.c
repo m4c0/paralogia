@@ -239,23 +239,12 @@ static ID3D12RootSignature * new_root_signature(unsigned bufs, unsigned txts) {
   return root_sign;
 }
 
-static ID3DBlob * d3d_compile(const char * tgt, const char * base, const char * ext) {
-  char name[128]; snprintf(name, 128, "%s.%s", base, ext);
-
-  HRSRC r = FindResource(NULL, name, "hlsl");
+static void * d3d_shader(const char * base, const char * ext, unsigned * sz) {
+  HRSRC r = FindResource(NULL, base, ext);
   HGLOBAL g = LoadResource(NULL, r);
   void * ptr = LockResource(g);
-  unsigned sz = SizeofResource(NULL, r);
-
-  ID3DBlob * blob;
-  ID3DBlob * err;
-  if (FAILED(D3DCompile(ptr, sz, NULL, NULL, NULL, "main", tgt, 0, 0, &blob, &err))) return (d3d_report_err(err), NULL);
-  // If you want warnings as well:
-  // if (err) return (d3d_report_err(err), NULL);
-  return blob;
-}
-static D3D12_SHADER_BYTECODE d3d_blob2shader(ID3DBlob * blob) {
-  return (D3D12_SHADER_BYTECODE){ COM(blob, GetBufferPointer), COM(blob, GetBufferSize) };
+  *sz = SizeofResource(NULL, r);
+  return ptr;
 }
 
 typedef struct d3d_pipeline_s {
@@ -263,17 +252,21 @@ typedef struct d3d_pipeline_s {
   ID3D12PipelineState * pipeline;
 } d3d_pipeline_t;
 static void * new_pipeline(void * ptr, const char * shader, unsigned bufs, unsigned txts) {
-  ID3DBlob * vs = d3d_compile("vs_5_0", shader, "vert");
-  ID3DBlob * ps = d3d_compile("ps_5_0", shader, "frag");
-  if (!vs || !ps) return NULL;
+  unsigned vss;
+  void * vs = d3d_shader(shader, "vert", &vss);
+  if (!vs) return NULL;
+
+  unsigned pss;
+  void * ps = d3d_shader(shader, "frag", &pss);
+  if (!ps) return NULL;
 
   ID3D12RootSignature * root_sign = new_root_signature(bufs, txts);
   if (!root_sign) return NULL;
 
   D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {
     .pRootSignature        = root_sign,
-    .VS                    = d3d_blob2shader(vs),
-    .PS                    = d3d_blob2shader(ps),
+    .VS                    = { vs, vss },
+    .PS                    = { ps, pss },
     .PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
     .SampleMask            = UINT_MAX,
     .NumRenderTargets      = 1,
@@ -298,9 +291,6 @@ static void * new_pipeline(void * ptr, const char * shader, unsigned bufs, unsig
   desc.BlendState.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
   void * pso;
   if (!COM_OK(d3d_device, CreateGraphicsPipelineState, &desc, &IID_ID3D12PipelineState, &pso)) return (d3d_output_errors(), NULL);
-
-  d3d_release(vs);
-  d3d_release(ps);
 
   d3d_pipeline_t * res = malloc(sizeof(d3d_pipeline_t));
   res->root_sign = root_sign;
