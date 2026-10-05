@@ -3,20 +3,6 @@
 
 #include "g3d.h"
 
-static id<MTLLibrary> load_library(id<MTLDevice> device, const char * n, const char * ext) {
-  NSString * name = [NSString stringWithFormat:@"%s.%s", n, ext];
-  NSString * path = [[NSBundle mainBundle] pathForResource:name ofType:@"metal"];
-  NSString * src = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-  MTLCompileOptions * opts = [MTLCompileOptions new];
-  NSError * err;
-  id<MTLLibrary> lib = [device newLibraryWithSource:src options:opts error:&err];
-  if (err) {
-    NSLog(@"Error compiling shader: %@", err);
-    return nil;
-  }
-  return lib;
-}
-
 @interface POCStuff : NSObject
 @property (nonatomic,strong) NSMutableArray * objects;
 @property (nonatomic,strong) id<MTLDevice> device;
@@ -34,20 +20,23 @@ static g3d_buffer_t * new_buffer(void * ptr, int sz) {
 static g3d_pipeline_t * new_pipeline(void * ptr, const char * shader, unsigned bufs, unsigned txts) {
   POCStuff * d = ptr;
 
-  id<MTLLibrary> vert = load_library(d.device, shader, "vert");
-  id<MTLLibrary> frag = load_library(d.device, shader, "frag");
-  if (!vert || !frag) return nil;
+  NSString * lib_name = [NSString stringWithFormat:@"%s", shader];
+  NSURL * lib_url = [[NSBundle mainBundle] URLForResource:lib_name withExtension:@"metallib"];
+  if (!lib_url) return NULL;
+
+  NSError * err;
+  id<MTLLibrary> lib = [d.device newLibraryWithURL:lib_url error:&err];
+  if (!lib) return NULL;
 
   MTLRenderPipelineDescriptor * pd = [MTLRenderPipelineDescriptor new];
-  pd.vertexFunction   = [vert newFunctionWithName:@"main0"];
-  pd.fragmentFunction = [frag newFunctionWithName:@"main0"];
+  pd.vertexFunction   = [lib newFunctionWithName:@"vs_main"];
+  pd.fragmentFunction = [lib newFunctionWithName:@"fs_main"];
   pd.colorAttachments[0].pixelFormat = MTLPixelFormatRGBA8Unorm;
   pd.colorAttachments[0].blendingEnabled = true;
   pd.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
   pd.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
   pd.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorOne;
   pd.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-  NSError * err;
   id<MTLRenderPipelineState> res = [d.device newRenderPipelineStateWithDescriptor:pd error:&err];
   if (err) return (NSLog(@"Error creating pipeline: %@", err), nil);
 
