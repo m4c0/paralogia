@@ -37,7 +37,7 @@ VERTEX vs2fs vs_main(uint vid VID) {
   return stage_output;
 }
 
-FRAGMENT fs_out fs_main(vs2fs vf) {
+FRAGMENT fs_out fs_main() {
   fs_out res;
   res.colour = float4(0.1, 0.2, 1, 1);
   return res;
