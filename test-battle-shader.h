@@ -55,14 +55,14 @@ VERTEX vs_out vs_main(uint vid VID) {
   return res;
 }
 
-float sd_box(float2 p, float2 b) {
-  float2 d = abs(p) - b;
-  return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+static inline float3 border(float3 c, float2 p) {
+  float2 dd = step(0.98, abs(p));
+  return c * (1 - 0.8 * max(dd.x, dd.y));
 }
 
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = vs.frag_pos * b0[0].aspect;
-  p = p * 8;
+  p = p * 8; // TODO: scale
 
   float2 uv = fract(p) * 2 - 1;
 
@@ -71,9 +71,7 @@ FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
       float3(0.15, 0.2, 0.25),
       int(floor(p.x) + floor(p.y)) & 1);
 
-  float d = sd_box(uv, 0.95);
-  d = step(0, d) * 0.3;
-  c = c * (1 - d);
+  c = border(c, uv);
 
   fs_out res;
   res.colour = float4(c, 1);
