@@ -18,6 +18,7 @@ void g3d_deinit(void) {
 int g3d_frame(const g3d_frame_t * t) {
   struct vs_in vsin = {
     .aspect = g_aspect,
+    .hover  = { 3, -2 },
   };
   t->load_buffer(g_vsin, &vsin, sizeof(struct vs_in));
 

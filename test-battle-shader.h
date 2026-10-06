@@ -26,11 +26,12 @@ using namespace metal;
 #else
 typedef struct { float x, y; } float2;
 typedef struct { float x, y, z, w; } float4;
+typedef struct { int x, y; } int2;
 #endif
 
 struct vs_in {
   float2 aspect;
-  float p0, p1;
+  int2   hover;
 };
 
 #if HLSL || METAL
@@ -60,10 +61,15 @@ static inline float3 border(float3 c, float2 p) {
   return c * (1 - 0.8 * max(dd.x, dd.y));
 }
 
+static inline float3 hover(float3 c, float2 p) {
+  return c * 0.1;
+}
+
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = vs.frag_pos * b0[0].aspect;
   p = p * 8; // TODO: scale
 
+  int2 id = int2(floor(p));
   float2 uv = fract(p) * 2 - 1;
 
   float3 c = mix(
@@ -72,6 +78,7 @@ FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
       int(floor(p.x) + floor(p.y)) & 1);
 
   c = border(c, uv);
+  if (all(id == b0[0].hover)) c = hover(c, uv);
 
   fs_out res;
   res.colour = float4(c, 1);
