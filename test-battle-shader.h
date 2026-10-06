@@ -52,7 +52,7 @@ VERTEX vs_out vs_main(uint vid VID) {
 
   vs_out res;
   res.frag_pos = p * 2 - 1;
-  res.pos = float4(res.frag_pos, 0.0f, 1.0f);
+  res.pos = float4(res.frag_pos * float2(1, -1), 0.0f, 1.0f);
   return res;
 }
 
