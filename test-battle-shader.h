@@ -32,6 +32,8 @@ typedef struct { int x, y; } int2;
 struct vs_in {
   float2 aspect;
   int2   hover;
+  float  scale;
+  float  p0, p1, p2;
 };
 
 #if HLSL || METAL
@@ -67,7 +69,7 @@ static inline float3 hover(float3 c, float2 p) {
 
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = vs.frag_pos * b0[0].aspect;
-  p = p * 8; // TODO: scale
+  p = p * b0[0].scale;
 
   int2 id = int2(floor(p));
   float2 uv = fract(p) * 2 - 1;

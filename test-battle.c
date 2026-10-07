@@ -13,6 +13,7 @@ static g3d_pipeline_t * g_ppl;
 int g3d_init(const g3d_init_t * t) {
   g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 1, 0);
   g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
+  g_vsin.scale = 8;
   return g_ppl ? 0 : 1;
 }
 void g3d_deinit(void) {
@@ -48,8 +49,8 @@ void g3d_resize(unsigned sw, unsigned sh) {
 }
 
 void g3d_mouse_move(int x, int y) {
-  float fx = 8.f * g_vsin.aspect.x * (2.f * x / g_scr_sz.x - 1.f);
-  float fy = 8.f * g_vsin.aspect.y * (2.f * y / g_scr_sz.y - 1.f);
+  float fx = g_vsin.scale * g_vsin.aspect.x * (2.f * x / g_scr_sz.x - 1.f);
+  float fy = g_vsin.scale * g_vsin.aspect.y * (2.f * y / g_scr_sz.y - 1.f);
   g_vsin.hover = (int2){ floorf(fx), floorf(fy) };
 }
 void g3d_mouse_down(int x, int y) {
