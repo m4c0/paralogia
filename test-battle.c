@@ -46,10 +46,9 @@ void g3d_mouse_move(int x, int y) {
 }
 void g3d_mouse_down(int x, int y) {
   g3d_mouse_move(x, y);
-  g_vsin.pick = (int2) {
-    floor(frag_pos_x(x / g_vsin.scr_sz.x, g_vsin)),
-    floor(frag_pos_y(y / g_vsin.scr_sz.y, g_vsin))
-  };
+
+  float2 p = { x, y };
+  g_vsin.pick = frag_scr_id(p, g_vsin);
 }
 void g3d_mouse_up(int x, int y) {
   g3d_mouse_move(x, y);

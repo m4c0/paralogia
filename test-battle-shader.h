@@ -49,10 +49,10 @@ static inline float frag_pos_y(float y, struct vs_in vsin) {
 }
 
 static inline int2 frag_scr_id(float2 p, struct vs_in vsin) {
-  return (int2) {
-    (int)floor(frag_pos_x(p.x / vsin.scr_sz.x, vsin)),
-    (int)floor(frag_pos_y(p.y / vsin.scr_sz.y, vsin))
-  }; 
+  int2 res;
+  res.x = (int)floor(frag_pos_x(p.x / vsin.scr_sz.x, vsin));
+  res.y = (int)floor(frag_pos_y(p.y / vsin.scr_sz.y, vsin));
+  return res;
 }
 
 #if HLSL || METAL
@@ -95,7 +95,7 @@ static inline float2 frag_pos(float2 p, vs_in vsin) {
 }
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
-  int2 hp = int2(floor(frag_pos(b0[0].mouse / b0[0].scr_sz, b0[0])));
+  int2 hp = frag_scr_id(b0[0].mouse, b0[0]);
 
   int2 id = int2(floor(p));
   float2 uv = fract(p) * 2 - 1;
