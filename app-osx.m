@@ -46,6 +46,10 @@
 - (void)keyUp:(NSEvent *)event {
   [self keyEvent:event down:0];
 }
+
+- (void)scrollWheel:(NSEvent *)event {
+  g3d_scroll(event.scrollingDeltaX, event.scrollingDeltaY);
+}
 @end
 
 @interface POCAppDelegate : NSObject<NSApplicationDelegate>

@@ -23,8 +23,6 @@ static float dt = 0;
 int g3d_frame(const g3d_frame_t * t) {
   dt += 0.02;
   g_vsin.scale = 6 + 2 * sin(dt);
-  g_vsin.trans.x = cos(dt) * g_vsin.scale;
-  g_vsin.trans.y = sin(dt) * g_vsin.scale;
 
   t->load_buffer(g_vsin_buf, &g_vsin, sizeof(struct vs_in));
 
@@ -62,4 +60,9 @@ void g3d_mouse_cancel(int x, int y) {
 }
 
 void g3d_key(g3d_key_t key, int down) {
+}
+
+void g3d_scroll(float x, float y) {
+  g_vsin.trans.x += 0.25 * x / g_vsin.scale;
+  g_vsin.trans.y += 0.25 * y / g_vsin.scale;
 }
