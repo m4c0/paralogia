@@ -14,16 +14,13 @@ int g3d_init(const g3d_init_t * t) {
   g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
   g_vsin.mouse = (float2){ 1e8, 1e8 };
   g_vsin.pick = (int2){ 1e8, 1e8 };
+  g_vsin.scale = 6;
   return g_ppl ? 0 : 1;
 }
 void g3d_deinit(void) {
 }
 
-static float dt = 0;
 int g3d_frame(const g3d_frame_t * t) {
-  dt += 0.02;
-  g_vsin.scale = 6 + 2 * sin(dt);
-
   t->load_buffer(g_vsin_buf, &g_vsin, sizeof(struct vs_in));
 
   g3d_frame_render_t rnd = {
@@ -63,6 +60,13 @@ void g3d_key(g3d_key_t key, int down) {
 }
 
 void g3d_scroll(float x, float y) {
-  g_vsin.trans.x += 0.25 * x / g_vsin.scale;
-  g_vsin.trans.y += 0.25 * y / g_vsin.scale;
+  g_vsin.trans.x += 0.0125 * x * g_vsin.scale;
+  g_vsin.trans.y += 0.0125 * y * g_vsin.scale;
+}
+
+void g3d_zoom(float z) {
+  float s = g_vsin.scale - z * 4;
+  if (s < 2) s = 2;
+  if (s > 12) s = 12;
+  g_vsin.scale = s;
 }

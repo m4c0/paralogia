@@ -50,6 +50,10 @@
 - (void)scrollWheel:(NSEvent *)event {
   g3d_scroll(event.scrollingDeltaX, event.scrollingDeltaY);
 }
+
+- (void)magnifyWithEvent:(NSEvent *)event {
+  g3d_zoom(event.magnification);
+}
 @end
 
 @interface POCAppDelegate : NSObject<NSApplicationDelegate>

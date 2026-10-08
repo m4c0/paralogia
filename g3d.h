@@ -53,5 +53,6 @@ typedef enum {
 void g3d_key(g3d_key_t key, int down);
 
 void g3d_scroll(float x, float y);
+void g3d_zoom(float z);
 
 #endif
