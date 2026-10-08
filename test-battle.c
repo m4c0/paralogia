@@ -4,8 +4,7 @@
 
 #include <math.h>
 
-static float2 g_scr_sz;
-static float2 g_mouse;
+static struct vs_in g_vsin;
 
 static g3d_buffer_t   * g_vsin_buf;
 static g3d_pipeline_t * g_ppl;
@@ -21,14 +20,9 @@ void g3d_deinit(void) {
 static float dt = 0;
 int g3d_frame(const g3d_frame_t * t) {
   dt += 0.02;
-  float scale = 6 + 2 * sin(dt);
+  g_vsin.scale = 6 + 2 * sin(dt);
 
-  struct vs_in vsin = {
-    .scr_sz = g_scr_sz,
-    .mouse  = g_mouse,
-    .scale  = scale,
-  };
-  t->load_buffer(g_vsin_buf, &vsin, sizeof(struct vs_in));
+  t->load_buffer(g_vsin_buf, &g_vsin, sizeof(struct vs_in));
 
   g3d_frame_render_t rnd = {
     .ptr       = t->ptr,
@@ -44,14 +38,18 @@ int g3d_frame(const g3d_frame_t * t) {
 }
 
 void g3d_resize(unsigned sw, unsigned sh) {
-  g_scr_sz = (float2){ sw, sh };
+  g_vsin.scr_sz = (float2){ sw, sh };
 }
 
 void g3d_mouse_move(int x, int y) {
-  g_mouse = (float2){ x, y };
+  g_vsin.mouse = (float2){ x, y };
 }
 void g3d_mouse_down(int x, int y) {
   g3d_mouse_move(x, y);
+  g_vsin.pick = (int2) {
+    floor(frag_pos_x(x / g_vsin.scr_sz.x, g_vsin)),
+    floor(frag_pos_y(y / g_vsin.scr_sz.y, g_vsin))
+  };
 }
 void g3d_mouse_up(int x, int y) {
   g3d_mouse_move(x, y);

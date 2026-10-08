@@ -33,18 +33,19 @@ typedef struct { int x, y; } int2;
 struct vs_in {
   float2 scr_sz;
   float2 mouse;
+  int2   pick;
   float  scale;
-  float  p0, p1, p2;
+  float  p0;
 };
 
 static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;
 }
-static inline float frag_pos_x(float2 p, struct vs_in vsin) {
-  return vsin.scale * aspect(vsin.scr_sz.x, vsin.scr_sz.y) * (p.x * 2.f - 1.f);
+static inline float frag_pos_x(float x, struct vs_in vsin) {
+  return vsin.scale * aspect(vsin.scr_sz.x, vsin.scr_sz.y) * (x * 2.f - 1.f);
 }
-static inline float frag_pos_y(float2 p, struct vs_in vsin) {
-  return vsin.scale * aspect(vsin.scr_sz.y, vsin.scr_sz.x) * (p.y * 2.f - 1.f);
+static inline float frag_pos_y(float y, struct vs_in vsin) {
+  return vsin.scale * aspect(vsin.scr_sz.y, vsin.scr_sz.x) * (y * 2.f - 1.f);
 }
 
 #if HLSL || METAL
@@ -78,9 +79,12 @@ static inline float3 border(float3 c, float2 p) {
 static inline float3 hover(float3 c, float2 p) {
   return c * 0.1;
 }
+static inline float3 pick(float3 c, float2 p) {
+  return float3(c.x, c.yz * 0.1);
+}
 
 static inline float2 frag_pos(float2 p, vs_in vsin) {
-  return float2(frag_pos_x(p, vsin), frag_pos_y(p, vsin));
+  return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
 }
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
@@ -96,6 +100,7 @@ FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
 
   c = border(c, uv);
   if (all(id == hp)) c = hover(c, uv);
+  if (all(id == b0[0].pick)) c = pick(c, uv);
 
   fs_out res;
   res.colour = float4(c, 1);
