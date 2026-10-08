@@ -1,8 +1,8 @@
 #include "g3d.h"
 
-#include "test-battle-shader.h"
-
 #include <math.h>
+
+#include "test-battle-shader.h"
 
 static struct vs_in g_vsin;
 

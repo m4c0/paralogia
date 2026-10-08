@@ -48,6 +48,13 @@ static inline float frag_pos_y(float y, struct vs_in vsin) {
   return vsin.scale * aspect(vsin.scr_sz.y, vsin.scr_sz.x) * (y * 2.f - 1.f);
 }
 
+static inline int2 frag_scr_id(float2 p, struct vs_in vsin) {
+  return (int2) {
+    (int)floor(frag_pos_x(p.x / vsin.scr_sz.x, vsin)),
+    (int)floor(frag_pos_y(p.y / vsin.scr_sz.y, vsin))
+  }; 
+}
+
 #if HLSL || METAL
 #if HLSL
 StructuredBuffer<vs_in> b0 : register(t0);
