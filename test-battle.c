@@ -24,20 +24,10 @@ int g3d_frame(const g3d_frame_t * t) {
   float scale = 6 + 2 * sin(dt);
 
   struct vs_in vsin = {
-    .aspect = (float2){
-      aspect(g_scr_sz.x, g_scr_sz.y),
-      aspect(g_scr_sz.y, g_scr_sz.x),
-    },
-    .scale = scale,
+    .scr_sz = g_scr_sz,
+    .mouse  = g_mouse,
+    .scale  = scale,
   };
-
-  float2 m = (float2) {
-    g_mouse.x / g_scr_sz.x,
-    g_mouse.y / g_scr_sz.y,
-  };
-  vsin.hover.x = floorf(frag_pos_x(m, vsin));
-  vsin.hover.y = floorf(frag_pos_y(m, vsin));
-
   t->load_buffer(g_vsin_buf, &vsin, sizeof(struct vs_in));
 
   g3d_frame_render_t rnd = {
