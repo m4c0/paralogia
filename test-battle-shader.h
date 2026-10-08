@@ -37,6 +37,13 @@ struct vs_in {
   float  p0, p1, p2;
 };
 
+static inline float aspect(float a, float b) {
+  return (a > b) ? a / b : 1;
+}
+static inline float frag_pos_x(float2 p, struct vs_in vsin) {
+  return 0;
+}
+
 #if HLSL || METAL
 #if HLSL
 StructuredBuffer<vs_in> b0 : register(t0);

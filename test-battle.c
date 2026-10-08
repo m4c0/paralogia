@@ -18,10 +18,6 @@ int g3d_init(const g3d_init_t * t) {
 void g3d_deinit(void) {
 }
 
-static inline float aspect(float a, float b) {
-  return (a > b) ? a / b : 1;
-}
-
 static float dt = 0;
 int g3d_frame(const g3d_frame_t * t) {
   dt += 0.02;
