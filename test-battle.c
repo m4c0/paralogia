@@ -18,13 +18,8 @@ int g3d_init(const g3d_init_t * t) {
 void g3d_deinit(void) {
 }
 
-static inline float aspect_x(void) {
-  float a = g_scr_sz.x / g_scr_sz.y;
-  return a > 1 ? a : 1;
-}
-static inline float aspect_y(void) {
-  float a = g_scr_sz.y / g_scr_sz.x;
-  return a > 1 ? a : 1;
+static inline float aspect(float a, float b) {
+  return (a > b) ? a / b : 1;
 }
 
 static float dt = 0;
@@ -32,10 +27,14 @@ int g3d_frame(const g3d_frame_t * t) {
   dt += 0.02;
   float scale = 6 + 2 * sin(dt);
 
-  float mx = scale * aspect_x() * (2.f * g_mouse.x / g_scr_sz.x - 1.f);
-  float my = scale * aspect_y() * (2.f * g_mouse.y / g_scr_sz.y - 1.f);
+  float ax = aspect(g_scr_sz.x, g_scr_sz.y);
+  float ay = aspect(g_scr_sz.y, g_scr_sz.x);
+
+  float mx = scale * ax * (2.f * g_mouse.x / g_scr_sz.x - 1.f);
+  float my = scale * ay * (2.f * g_mouse.y / g_scr_sz.y - 1.f);
+
   struct vs_in vsin = {
-    .aspect = (float2){ aspect_x(), aspect_y() },
+    .aspect = (float2){ ax, ay },
     .hover = (int2){ floorf(mx), floorf(my) },
     .scale = scale,
   };
