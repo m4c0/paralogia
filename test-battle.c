@@ -23,17 +23,21 @@ int g3d_frame(const g3d_frame_t * t) {
   dt += 0.02;
   float scale = 6 + 2 * sin(dt);
 
-  float ax = aspect(g_scr_sz.x, g_scr_sz.y);
-  float ay = aspect(g_scr_sz.y, g_scr_sz.x);
-
-  float mx = scale * ax * (2.f * g_mouse.x / g_scr_sz.x - 1.f);
-  float my = scale * ay * (2.f * g_mouse.y / g_scr_sz.y - 1.f);
-
   struct vs_in vsin = {
-    .aspect = (float2){ ax, ay },
-    .hover = (int2){ floorf(mx), floorf(my) },
+    .aspect = (float2){
+      aspect(g_scr_sz.x, g_scr_sz.y),
+      aspect(g_scr_sz.y, g_scr_sz.x),
+    },
     .scale = scale,
   };
+
+  float2 m = (float2) {
+    2.f * g_mouse.x / g_scr_sz.x - 1.f,
+    2.f * g_mouse.y / g_scr_sz.y - 1.f,
+  };
+  vsin.hover.x = floorf(frag_pos_x(m, vsin));
+  vsin.hover.y = floorf(frag_pos_y(m, vsin));
+
   t->load_buffer(g_vsin_buf, &vsin, sizeof(struct vs_in));
 
   g3d_frame_render_t rnd = {

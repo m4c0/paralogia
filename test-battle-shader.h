@@ -89,7 +89,7 @@ FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float3 c = mix(
       float3(0.1, 0.15, 0.2),
       float3(0.15, 0.2, 0.25),
-      int(floor(p.x) + floor(p.y)) & 1);
+      (id.x + id.y) & 1);
 
   c = border(c, uv);
   if (all(id == b0[0].hover)) c = hover(c, uv);
