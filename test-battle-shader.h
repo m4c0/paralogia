@@ -9,6 +9,7 @@
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
 #  define fract frac
+#  define mix   lerp
 #elif METAL
 #  pragma clang diagnostic ignored "-Wmissing-prototypes"
 #  include <metal_stdlib>
