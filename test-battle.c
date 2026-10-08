@@ -60,11 +60,12 @@ void g3d_key(g3d_key_t key, int down) {
 }
 
 void g3d_scroll(float x, float y) {
-  g_vsin.trans.x += 0.0125 * x * g_vsin.scale;
-  g_vsin.trans.y += 0.0125 * y * g_vsin.scale;
+  g_vsin.trans.x -= 0.0125 * x * g_vsin.scale;
+  g_vsin.trans.y -= 0.0125 * y * g_vsin.scale;
 }
 
 void g3d_zoom(float z) {
+  // TODO: zoom centered by mouse hover
   float s = g_vsin.scale - z * 4;
   if (s < 2) s = 2;
   if (s > 12) s = 12;
