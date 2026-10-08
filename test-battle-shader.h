@@ -41,10 +41,10 @@ static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;
 }
 static inline float frag_pos_x(float2 p, struct vs_in vsin) {
-  return vsin.scale * vsin.aspect.x * p.x;
+  return vsin.scale * vsin.aspect.x * (p.x * 2.f - 1.f);
 }
 static inline float frag_pos_y(float2 p, struct vs_in vsin) {
-  return vsin.scale * vsin.aspect.y * p.y;
+  return vsin.scale * vsin.aspect.y * (p.y * 2.f - 1.f);
 }
 
 #if HLSL || METAL
@@ -61,11 +61,12 @@ struct fs_out {
 };
 
 VERTEX vs_out vs_main(uint vid VID) {
-  float2 p = float2(vid & 1, (vid >> 1) & 1);
+  float2 fp = float2(vid & 1, (vid >> 1) & 1);
+  float2 p = fp * 2 - 1;
 
   vs_out res;
-  res.frag_pos = p * 2 - 1;
-  res.pos = float4(res.frag_pos * float2(1, -1), 0.0f, 1.0f);
+  res.frag_pos = fp;
+  res.pos = float4(p * float2(1, -1), 0.0f, 1.0f);
   return res;
 }
 

@@ -32,8 +32,8 @@ int g3d_frame(const g3d_frame_t * t) {
   };
 
   float2 m = (float2) {
-    2.f * g_mouse.x / g_scr_sz.x - 1.f,
-    2.f * g_mouse.y / g_scr_sz.y - 1.f,
+    g_mouse.x / g_scr_sz.x,
+    g_mouse.y / g_scr_sz.y,
   };
   vsin.hover.x = floorf(frag_pos_x(m, vsin));
   vsin.hover.y = floorf(frag_pos_y(m, vsin));
