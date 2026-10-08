@@ -41,7 +41,10 @@ static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;
 }
 static inline float frag_pos_x(float2 p, struct vs_in vsin) {
-  return 0;
+  return vsin.scale * vsin.aspect.x * p.x;
+}
+static inline float frag_pos_y(float2 p, struct vs_in vsin) {
+  return vsin.scale * vsin.aspect.y * p.y;
 }
 
 #if HLSL || METAL
@@ -76,8 +79,9 @@ static inline float3 hover(float3 c, float2 p) {
 }
 
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
-  float2 p = vs.frag_pos * b0[0].aspect;
-  p = p * b0[0].scale;
+  float2 p;
+  p.x = frag_pos_x(vs.frag_pos, b0[0]);
+  p.y = frag_pos_y(vs.frag_pos, b0[0]);
 
   int2 id = int2(floor(p));
   float2 uv = fract(p) * 2 - 1;
