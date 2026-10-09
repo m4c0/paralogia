@@ -31,12 +31,13 @@ typedef struct { int x, y; } int2;
 #endif
 
 struct vs_in {
+  int2   brd_sz;
   float2 scr_sz;
   float2 mouse;
   int2   pick;
   float2 trans;
   float  scale;
-  float  p0, p1, p2;
+  float  p0;
 };
 
 static inline float aspect(float a, float b) {
