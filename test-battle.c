@@ -9,6 +9,12 @@ static struct vs_in g_vsin;
 static g3d_buffer_t   * g_vsin_buf;
 static g3d_pipeline_t * g_ppl;
 
+static inline float clamp(float x, float a, float b) {
+  if (x < a) return a;
+  if (x > b) return b;
+  return x;
+}
+
 int g3d_init(const g3d_init_t * t) {
   g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 1, 0);
   g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
@@ -60,14 +66,12 @@ void g3d_key(g3d_key_t key, int down) {
 }
 
 void g3d_scroll(float x, float y) {
-  g_vsin.trans.x -= 0.0125 * x * g_vsin.scale;
-  g_vsin.trans.y -= 0.0125 * y * g_vsin.scale;
+  g_vsin.trans.x = clamp(g_vsin.trans.x + 0.00125 * x * g_vsin.scale, 0, 10);
+  g_vsin.trans.y = clamp(g_vsin.trans.y + 0.00125 * y * g_vsin.scale, 0, 10);
 }
 
 void g3d_zoom(float z) {
   // TODO: zoom centered by mouse hover
   float s = g_vsin.scale - z * 4;
-  if (s < 2) s = 2;
-  if (s > 12) s = 12;
-  g_vsin.scale = s;
+  g_vsin.scale = clamp(s, 2, 12);
 }
