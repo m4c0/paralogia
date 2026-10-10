@@ -26,6 +26,7 @@ int g3d_init(const g3d_init_t * t) {
   g_vsin.mouse = (float2){ 1e8, 1e8 };
   g_vsin.pick = (int2){ 1e8, 1e8 };
   g_vsin.scale = 6;
+  g_vsin.trans = (float2){ 3, 3 };
 
   g_board_buf = t->new_buffer(t->ptr, sizeof(unsigned) * 20 * 20);
 
@@ -37,7 +38,11 @@ void g3d_deinit(void) {
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
     unsigned brd[20 * 20] = {0};
-    brd[0] = brd[4] = brd[40] = 1;
+    brd[21] = brd[22] = brd[23] = brd[24] = 1;
+    brd[41] = brd[61] = brd[64] = 1;
+    brd[42] = 3;
+    brd[81] = 2;
+    brd[104] = 2;
     t->load_buffer(g_board_buf, brd, sizeof(unsigned) * 20 * 20);
     g_board_loaded = 1;
   }
