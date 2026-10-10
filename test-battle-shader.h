@@ -6,6 +6,7 @@
 #  define TGT(n) : SV_Target##n
 #  define IN
 #  define BUF(...)
+#  define B(...)
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
 #  define fract frac
@@ -22,6 +23,7 @@ using namespace metal;
 #  define IID    [[instance_id]]
 #  define IN     [[stage_in]]
 #  define BUF(N, X) X [[buffer(N)]],
+#  define B(N) N,
 #  define VERTEX   vertex
 #  define FRAGMENT fragment
 #else
@@ -92,7 +94,9 @@ static inline float3 c_pick(float3 c, float2 p) {
   return float3(c.x, c.yz * 0.1);
 }
 
-static inline float3 c_inside(float3 c, float2 p, vs_in vsin) {
+static inline float3 c_inside(
+    B(const device uint  * b1)
+    float3 c, float2 p, vs_in vsin) {
   if (any(p < 0)) return c;
   if (any(p > float2(vsin.brd_sz))) return c;
 
@@ -109,17 +113,26 @@ static inline float3 c_inside(float3 c, float2 p, vs_in vsin) {
   c = c_border(c, uv);
   if (all(id == hp)) c = c_hover(c, uv);
   if (all(id == vsin.pick)) c = c_pick(c, uv);
+
+  uint i = id.y * uint(vsin.brd_sz.x) + id.x;
+  switch (b1[i]) {
+    case 1: c = 0.3; break;
+  }
+
   return c;
 }
 
 static inline float2 frag_pos(float2 p, vs_in vsin) {
   return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
 }
-FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
+FRAGMENT fs_out fs_main(
+    BUF(0, const device vs_in * b0)
+    BUF(1, const device uint  * b1)
+    vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
 
   float3 c = float3(0.05, 0.10, 0.15);
-  c = c_inside(c, p, b0[0]);
+  c = c_inside(B(b1) c, p, b0[0]);
 
   fs_out res;
   res.colour = float4(c, 1);

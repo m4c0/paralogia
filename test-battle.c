@@ -6,7 +6,10 @@
 
 static struct vs_in g_vsin;
 
+static int g_board_loaded;
+
 static g3d_buffer_t   * g_vsin_buf;
+static g3d_buffer_t   * g_board_buf;
 static g3d_pipeline_t * g_ppl;
 
 static inline float clamp(float x, float a, float b) {
@@ -17,17 +20,28 @@ static inline float clamp(float x, float a, float b) {
 
 int g3d_init(const g3d_init_t * t) {
   g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 1, 0);
+
   g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
   g_vsin.brd_sz = (int2){ 20, 20 };
   g_vsin.mouse = (float2){ 1e8, 1e8 };
   g_vsin.pick = (int2){ 1e8, 1e8 };
   g_vsin.scale = 6;
+
+  g_board_buf = t->new_buffer(t->ptr, sizeof(unsigned) * 20 * 20);
+
   return g_ppl ? 0 : 1;
 }
 void g3d_deinit(void) {
 }
 
 int g3d_frame(const g3d_frame_t * t) {
+  if (!g_board_loaded) {
+    unsigned brd[20 * 20] = {0};
+    brd[0] = brd[4] = brd[40] = 1;
+    t->load_buffer(g_board_buf, brd, sizeof(unsigned) * 20 * 20);
+    g_board_loaded = 1;
+  }
+
   g_vsin.trans.x = clamp(g_vsin.trans.x, 0, g_vsin.brd_sz.x);
   g_vsin.trans.y = clamp(g_vsin.trans.y, 0, g_vsin.brd_sz.y);
 
@@ -36,7 +50,7 @@ int g3d_frame(const g3d_frame_t * t) {
   g3d_frame_render_t rnd = {
     .ptr       = t->ptr,
     .pipeline  = g_ppl,
-    .buffers   = (g3d_buffer_t *[]) { g_vsin_buf, 0 },
+    .buffers   = (g3d_buffer_t *[]) { g_vsin_buf, g_board_buf, 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
     .instances = 1,
