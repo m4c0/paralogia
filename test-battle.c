@@ -70,6 +70,7 @@ void g3d_key(g3d_key_t key, int down) {
 }
 
 void g3d_scroll(float x, float y) {
+  // TODO: this magic const might be related to screen resolution
   g_vsin.trans.x = g_vsin.trans.x + 0.00125 * x * g_vsin.scale;
   g_vsin.trans.y = g_vsin.trans.y + 0.00125 * y * g_vsin.scale;
 }
