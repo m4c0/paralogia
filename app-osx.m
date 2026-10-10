@@ -52,7 +52,7 @@
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event {
-  g3d_zoom(event.magnification);
+  g3d_zoom(event.magnification * 4.f);
 }
 @end
 

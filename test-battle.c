@@ -73,6 +73,6 @@ void g3d_scroll(float x, float y) {
 
 void g3d_zoom(float z) {
   // TODO: zoom centered by mouse hover
-  float s = g_vsin.scale - z * 4;
+  float s = g_vsin.scale - z;
   g_vsin.scale = clamp(s, 2, 12);
 }
