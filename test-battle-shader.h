@@ -80,16 +80,36 @@ VERTEX vs_out vs_main(uint vid VID) {
   return res;
 }
 
-static inline float3 border(float3 c, float2 p) {
+static inline float3 c_border(float3 c, float2 p) {
   float2 dd = step(0.98, abs(p));
   return c * (1 - 0.8 * max(dd.x, dd.y));
 }
 
-static inline float3 hover(float3 c, float2 p) {
+static inline float3 c_hover(float3 c, float2 p) {
   return c * 0.1;
 }
-static inline float3 pick(float3 c, float2 p) {
+static inline float3 c_pick(float3 c, float2 p) {
   return float3(c.x, c.yz * 0.1);
+}
+
+static inline float3 c_inside(float3 c, float2 p, vs_in vsin) {
+  if (any(p < 0)) return c;
+  if (any(p > float2(vsin.brd_sz))) return c;
+
+  int2 hp = frag_scr_id(vsin.mouse, vsin);
+
+  int2 id = int2(floor(p));
+  float2 uv = fract(p) * 2 - 1;
+
+  c = mix(
+      float3(0.1, 0.15, 0.2),
+      float3(0.15, 0.2, 0.25),
+      (id.x + id.y) & 1);
+
+  c = c_border(c, uv);
+  if (all(id == hp)) c = c_hover(c, uv);
+  if (all(id == vsin.pick)) c = c_pick(c, uv);
+  return c;
 }
 
 static inline float2 frag_pos(float2 p, vs_in vsin) {
@@ -97,19 +117,9 @@ static inline float2 frag_pos(float2 p, vs_in vsin) {
 }
 FRAGMENT fs_out fs_main(BUF(0, const device vs_in * b0) vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
-  int2 hp = frag_scr_id(b0[0].mouse, b0[0]);
 
-  int2 id = int2(floor(p));
-  float2 uv = fract(p) * 2 - 1;
-
-  float3 c = mix(
-      float3(0.1, 0.15, 0.2),
-      float3(0.15, 0.2, 0.25),
-      (id.x + id.y) & 1);
-
-  c = border(c, uv);
-  if (all(id == hp)) c = hover(c, uv);
-  if (all(id == b0[0].pick)) c = pick(c, uv);
+  float3 c = float3(0.05, 0.10, 0.15);
+  c = c_inside(c, p, b0[0]);
 
   fs_out res;
   res.colour = float4(c, 1);
