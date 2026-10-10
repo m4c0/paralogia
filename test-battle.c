@@ -70,8 +70,8 @@ void g3d_key(g3d_key_t key, int down) {
 }
 
 void g3d_scroll(float x, float y) {
-  g_vsin.trans.x = g_vsin.trans.x + g_vsin.scale * x / g_vsin.scr_sz.x;
-  g_vsin.trans.y = g_vsin.trans.y + g_vsin.scale * y / g_vsin.scr_sz.y;
+  g_vsin.trans.x = g_vsin.trans.x - g_vsin.scale * x / g_vsin.scr_sz.x;
+  g_vsin.trans.y = g_vsin.trans.y - g_vsin.scale * y / g_vsin.scr_sz.y;
 }
 
 void g3d_zoom(float z) {

@@ -652,7 +652,7 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
         // TODO detect mouse-out events
         int x = LOWORD(l_param);
         int y = HIWORD(l_param);
-        if (g_last_drag_x != 1e8) g3d_scroll(g_last_drag_x - x, g_last_drag_y - y);
+        if (g_last_drag_x != 1e8) g3d_scroll(x - g_last_drag_x, y - g_last_drag_y);
         g_last_drag_x = x;
         g_last_drag_y = y;
       }
