@@ -659,10 +659,10 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
 
       g3d_mouse_move(LOWORD(l_param), HIWORD(l_param));
       return 0;
-    case WM_RBUTTONUP:
-    case WM_MBUTTONUP:
-      g_last_drag_x = 1e8;
-      g_last_drag_y = 1e8;
+    case WM_RBUTTONDOWN:
+    case WM_MBUTTONDOWN:
+      g_last_drag_x = LOWORD(l_param);
+      g_last_drag_y = HIWORD(l_param);
       return 0;
 
     case WM_LBUTTONDOWN:
