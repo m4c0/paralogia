@@ -28,6 +28,9 @@ void g3d_deinit(void) {
 }
 
 int g3d_frame(const g3d_frame_t * t) {
+  g_vsin.trans.x = clamp(g_vsin.trans.x, 0, g_vsin.brd_sz.x);
+  g_vsin.trans.y = clamp(g_vsin.trans.y, 0, g_vsin.brd_sz.y);
+
   t->load_buffer(g_vsin_buf, &g_vsin, sizeof(struct vs_in));
 
   g3d_frame_render_t rnd = {
@@ -67,8 +70,8 @@ void g3d_key(g3d_key_t key, int down) {
 }
 
 void g3d_scroll(float x, float y) {
-  g_vsin.trans.x = clamp(g_vsin.trans.x + 0.00125 * x * g_vsin.scale, 0, g_vsin.brd_sz.x);
-  g_vsin.trans.y = clamp(g_vsin.trans.y + 0.00125 * y * g_vsin.scale, 0, g_vsin.brd_sz.y);
+  g_vsin.trans.x = g_vsin.trans.x + 0.00125 * x * g_vsin.scale;
+  g_vsin.trans.y = g_vsin.trans.y + 0.00125 * y * g_vsin.scale;
 }
 
 void g3d_zoom(float z) {
