@@ -48,6 +48,7 @@
 }
 
 - (void)scrollWheel:(NSEvent *)event {
+  // TODO should we consider hasPreciseScrollingDeltas?
   g3d_scroll(event.scrollingDeltaX, event.scrollingDeltaY);
 }
 
