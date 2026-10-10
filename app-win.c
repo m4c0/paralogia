@@ -637,6 +637,8 @@ static int d3d_resize(unsigned sw, unsigned sh) {
   return 0;
 }
 
+static int g_last_drag_x = 1e8;
+static int g_last_drag_y = 1e8;
 static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) {
   switch (msg) {
     int state = 0;
@@ -646,8 +648,23 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
       return 0;
 
     case WM_MOUSEMOVE:
+      if (w_param & (MK_MBUTTON | MK_RBUTTON)) {
+        // TODO detect mouse-out events
+        int x = LOWORD(l_param);
+        int y = HIWORD(l_param);
+        if (g_last_drag_x != 1e8) g3d_scroll(g_last_drag_x - x, g_last_drag_y - y);
+        g_last_drag_x = x;
+        g_last_drag_y = y;
+      }
+
       g3d_mouse_move(LOWORD(l_param), HIWORD(l_param));
       return 0;
+    case WM_RBUTTONUP:
+    case WM_MBUTTONUP:
+      g_last_drag_x = 1e8;
+      g_last_drag_y = 1e8;
+      return 0;
+
     case WM_LBUTTONDOWN:
       g3d_mouse_down(LOWORD(l_param), HIWORD(l_param));
       return 0;
