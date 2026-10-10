@@ -653,6 +653,9 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
       return 0;
     case WM_LBUTTONUP:
       g3d_mouse_up(LOWORD(l_param), HIWORD(l_param));
+
+    case WM_MOUSEWHEEL:
+      g3d_zoom((float)GET_WHEEL_DELTA_WPARAM(w_param) / (float)WHEEL_DELTA);
       return 0;
 
     case WM_KEYDOWN:
@@ -668,7 +671,6 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
         case VK_SPACE:  g3d_key(g3d_key_action, state); break;
         case VK_ESCAPE: g3d_key(g3d_key_cancel, state); break;
       }
-
       return 0;
 
     case WM_SIZE:
