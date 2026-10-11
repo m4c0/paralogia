@@ -62,6 +62,7 @@ static inline int2 frag_scr_id(float2 p, struct vs_in vsin) {
 #if HLSL || METAL
 #if HLSL
 StructuredBuffer<vs_in> b0 : register(t0);
+StructuredBuffer<uint>  b1 : register(t1);
 #endif
 
 struct vs_out {

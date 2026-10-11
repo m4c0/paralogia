@@ -19,7 +19,7 @@ static inline float clamp(float x, float a, float b) {
 }
 
 int g3d_init(const g3d_init_t * t) {
-  g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 1, 0);
+  g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 2, 0);
 
   g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
   g_vsin.brd_sz = (int2){ 20, 20 };
