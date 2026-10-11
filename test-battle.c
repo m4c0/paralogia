@@ -23,8 +23,8 @@ int g3d_init(const g3d_init_t * t) {
 
   g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
   g_vsin.brd_sz = (int2){ 20, 20 };
-  g_vsin.mouse = (float2){ 1e8, 1e8 };
-  g_vsin.pick = (int2){ 1e8, 1e8 };
+  g_vsin.mouse = (int2){ -1, -1 };
+  g_vsin.pick = (int2){ -1, -1 };
   g_vsin.scale = 6;
   g_vsin.trans = (float2){ 3, 3 };
 
@@ -70,7 +70,8 @@ void g3d_resize(unsigned sw, unsigned sh) {
 }
 
 void g3d_mouse_move(int x, int y) {
-  g_vsin.mouse = (float2){ x, y };
+  float2 p = { x, y };
+  g_vsin.mouse = frag_scr_id(p, g_vsin);
 }
 void g3d_mouse_down(int x, int y) {
   g3d_mouse_move(x, y);

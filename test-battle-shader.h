@@ -35,7 +35,7 @@ typedef struct { int x, y; } int2;
 struct vs_in {
   int2   brd_sz;
   float2 scr_sz;
-  float2 mouse;
+  int2   mouse;
   int2   pick;
   float2 trans;
   float  scale;
@@ -101,7 +101,7 @@ static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
   if (any(vsin.pick < 0 || vsin.pick >= vsin.brd_sz)) return c;
 
   float2 pa = p - vsin.pick - 0.5;
-  float2 ba = frag_scr_id(vsin.mouse, vsin) - vsin.pick;
+  float2 ba = vsin.mouse - vsin.pick;
   float h = clamp(dot(pa, ba) / dot(ba, ba), 0, 1);
   float d = step(0, length(pa - ba * h) - 0.05);
 
@@ -114,8 +114,6 @@ static inline float3 c_inside(
   if (any(p < 0)) return c;
   if (any(p > float2(vsin.brd_sz))) return c;
 
-  int2 hp = frag_scr_id(vsin.mouse, vsin);
-
   int2 id = int2(floor(p));
   float2 uv = fract(p) * 2 - 1;
 
@@ -125,7 +123,7 @@ static inline float3 c_inside(
       (id.x + id.y) & 1);
 
   c = c_border(c, uv);
-  if (all(id == hp)) c = c_hover(c, uv);
+  if (all(id == vsin.mouse)) c = c_hover(c, uv);
   if (all(id == vsin.pick)) c = c_pick(c, uv);
 
   c = c_track(c, p, vsin);
