@@ -95,6 +95,10 @@ static inline float3 c_pick(float3 c, float2 p) {
   return float3(c.x, c.yz * 0.1);
 }
 
+static inline float3 c_track(float3 c) {
+  return c * 1.1;
+}
+
 static inline float3 c_inside(
     B(const device uint  * b1)
     float3 c, float2 p, vs_in vsin) {
@@ -114,6 +118,8 @@ static inline float3 c_inside(
   c = c_border(c, uv);
   if (all(id == hp)) c = c_hover(c, uv);
   if (all(id == vsin.pick)) c = c_pick(c, uv);
+
+  if (all(vsin.pick >= 0 && vsin.pick < vsin.brd_sz)) c = c_track(c);
 
   uint i = id.y * uint(vsin.brd_sz.x) + id.x;
   switch (b1[i]) {
