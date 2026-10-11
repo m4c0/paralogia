@@ -69,15 +69,24 @@ void g3d_resize(unsigned sw, unsigned sh) {
   g_vsin.scr_sz = (float2){ sw, sh };
 }
 
+static inline int2 frag_scr_id(float2 p) {
+  int2 res;
+  res.x = (int)floor(frag_pos_x(p.x / g_vsin.scr_sz.x, g_vsin));
+  res.y = (int)floor(frag_pos_y(p.y / g_vsin.scr_sz.y, g_vsin));
+  if (res.x < 0 || res.x > g_vsin.brd_sz.x) res.x = res.y = -1;
+  if (res.y < 0 || res.y > g_vsin.brd_sz.y) res.x = res.y = -1;
+  return res;
+}
+
 void g3d_mouse_move(int x, int y) {
   float2 p = { x, y };
-  g_vsin.mouse = frag_scr_id(p, g_vsin);
+  g_vsin.mouse = frag_scr_id(p);
 }
 void g3d_mouse_down(int x, int y) {
   g3d_mouse_move(x, y);
 
   float2 p = { x, y };
-  g_vsin.pick = frag_scr_id(p, g_vsin);
+  g_vsin.pick = frag_scr_id(p);
 }
 void g3d_mouse_up(int x, int y) {
   g_vsin.pick = (int2){ -1, -1 };
