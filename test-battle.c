@@ -79,10 +79,10 @@ void g3d_mouse_down(int x, int y) {
   g_vsin.pick = frag_scr_id(p, g_vsin);
 }
 void g3d_mouse_up(int x, int y) {
-  g3d_mouse_move(x, y);
+  g_vsin.pick = (int2){ -1, -1 };
 }
 void g3d_mouse_cancel(int x, int y) {
-  g3d_mouse_move(x, y);
+  g_vsin.pick = (int2){ -1, -1 };
 }
 
 void g3d_key(g3d_key_t key, int down) {
