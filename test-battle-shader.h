@@ -56,8 +56,8 @@ static inline int2 frag_scr_id(float2 p, struct vs_in vsin) {
   int2 res;
   res.x = (int)floor(frag_pos_x(p.x / vsin.scr_sz.x, vsin));
   res.y = (int)floor(frag_pos_y(p.y / vsin.scr_sz.y, vsin));
-  if (res.x <= 0 || res.x > vsin.brd_sz.x) res.x = res.y = -1;
-  if (res.y <= 0 || res.y > vsin.brd_sz.y) res.x = res.y = -1;
+  if (res.x < 0 || res.x > vsin.brd_sz.x) res.x = res.y = -1;
+  if (res.y < 0 || res.y > vsin.brd_sz.y) res.x = res.y = -1;
   return res;
 }
 
@@ -113,7 +113,7 @@ static inline float3 c_inside(
     B(const device uint  * b1)
     float3 c, float2 p, vs_in vsin) {
   if (any(p < 0)) return c;
-  if (any(p > float2(vsin.brd_sz))) return c;
+  if (any(p >= float2(vsin.brd_sz))) return c;
 
   int2 id = int2(floor(p));
   float2 uv = fract(p) * 2 - 1;
