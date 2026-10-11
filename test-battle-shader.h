@@ -101,9 +101,9 @@ static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
   if (any(vsin.pick < 0 || vsin.pick >= vsin.brd_sz)) return c;
   if (any(vsin.mouse < 0 || vsin.mouse >= vsin.brd_sz)) return c;
 
-  float2 pa = p - vsin.pick - 0.5;
-  float2 ba = vsin.mouse - vsin.pick;
-  float h = clamp(dot(pa, ba) / dot(ba, ba), 0, 1);
+  float2 pa = p - float2(vsin.pick) - 0.5;
+  float2 ba = float2(vsin.mouse - vsin.pick);
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.f, 1.f);
   float d = step(0, length(pa - ba * h) - 0.05);
 
   return mix(float3(0.5, 0, 0), c, d);
