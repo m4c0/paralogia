@@ -77,6 +77,9 @@ static inline int2 frag_scr_id(float2 p) {
   if (res.y < 0 || res.y > g_vsin.brd_sz.y) res.x = res.y = -1;
   return res;
 }
+static void cancel() {
+  g_vsin.pick = (int2){ -1, -1 };
+}
 
 void g3d_mouse_move(int x, int y) {
   float2 p = { x, y };
@@ -89,13 +92,14 @@ void g3d_mouse_down(int x, int y) {
   g_vsin.pick = frag_scr_id(p);
 }
 void g3d_mouse_up(int x, int y) {
-  g_vsin.pick = (int2){ -1, -1 };
+  cancel();
 }
 void g3d_mouse_cancel(int x, int y) {
-  g_vsin.pick = (int2){ -1, -1 };
+  cancel();
 }
 
 void g3d_key(g3d_key_t key, int down) {
+  if (key == g3d_key_cancel) cancel();
 }
 
 void g3d_scroll(float x, float y) {
