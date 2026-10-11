@@ -95,8 +95,15 @@ static inline float3 c_pick(float3 c, float2 p) {
   return float3(c.x, c.yz * 0.1);
 }
 
-static inline float3 c_track(float3 c) {
-  return c * 1.1;
+static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
+  if (any(vsin.pick < 0 || vsin.pick >= vsin.brd_sz)) return c;
+
+  float2 pa = p - vsin.pick - 0.5;
+  float2 ba = frag_scr_id(vsin.mouse, vsin) - vsin.pick;
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0, 1);
+  float d = step(0, length(pa - ba * h) - 0.05);
+
+  return mix(float3(0.5, 0, 0), c, d);
 }
 
 static inline float3 c_inside(
@@ -119,7 +126,7 @@ static inline float3 c_inside(
   if (all(id == hp)) c = c_hover(c, uv);
   if (all(id == vsin.pick)) c = c_pick(c, uv);
 
-  if (all(vsin.pick >= 0 && vsin.pick < vsin.brd_sz)) c = c_track(c);
+  c = c_track(c, p, vsin);
 
   uint i = id.y * uint(vsin.brd_sz.x) + id.x;
   switch (b1[i]) {
