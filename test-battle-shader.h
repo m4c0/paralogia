@@ -99,6 +99,7 @@ static inline float3 c_pick(float3 c, float2 p) {
 
 static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
   if (any(vsin.pick < 0 || vsin.pick >= vsin.brd_sz)) return c;
+  if (any(vsin.mouse < 0 || vsin.mouse >= vsin.brd_sz)) return c;
 
   float2 pa = p - vsin.pick - 0.5;
   float2 ba = vsin.mouse - vsin.pick;
