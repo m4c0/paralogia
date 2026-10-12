@@ -84,12 +84,16 @@ static void cancel() {
 void g3d_mouse_move(int x, int y) {
   float2 p = { x, y };
   g_vsin.mouse = frag_scr_id(p);
+  if (g_vsin.pick.x < 0) return;
+
+  g_vsin.mouse = (int2){ -1, -1 };
 }
 void g3d_mouse_down(int x, int y) {
   g3d_mouse_move(x, y);
 
   float2 p = { x, y };
   g_vsin.pick = frag_scr_id(p);
+  g_vsin.mouse = (int2){ -1, -1 };
 }
 void g3d_mouse_up(int x, int y) {
   cancel();
