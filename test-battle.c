@@ -31,6 +31,13 @@ int g3d_init(const g3d_init_t * t) {
 
   g_board_buf = t->new_buffer(t->ptr, sizeof(unsigned) * 20 * 20);
 
+  unsigned * brd = g_board;
+  brd[21] = brd[22] = brd[23] = brd[24] = 1;
+  brd[41] = brd[61] = brd[64] = 1;
+  brd[42] = 3;
+  brd[81] = 2;
+  brd[104] = 2;
+
   return g_ppl ? 0 : 1;
 }
 void g3d_deinit(void) {
@@ -38,13 +45,7 @@ void g3d_deinit(void) {
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    unsigned * brd = g_board;
-    brd[21] = brd[22] = brd[23] = brd[24] = 1;
-    brd[41] = brd[61] = brd[64] = 1;
-    brd[42] = 3;
-    brd[81] = 2;
-    brd[104] = 2;
-    t->load_buffer(g_board_buf, brd, sizeof(unsigned) * 20 * 20);
+    t->load_buffer(g_board_buf, g_board, sizeof(unsigned) * 20 * 20);
     g_board_loaded = 1;
   }
 
@@ -130,6 +131,15 @@ void g3d_mouse_down(int x, int y) {
   g_vsin.pick = (int2){ -1, -1 };
 }
 void g3d_mouse_up(int x, int y) {
+  if (g_vsin.pick.x < 0 || g_vsin.mouse.x < 0) return cancel();
+
+  unsigned i = g_vsin.brd_sz.x * g_vsin.pick.y + g_vsin.pick.x;
+  unsigned j = g_vsin.brd_sz.x * g_vsin.mouse.y + g_vsin.mouse.x;
+  g_board[j] = g_board[i];
+  g_board[i] = 0;
+
+  g_board_loaded = 0;
+
   cancel();
 }
 void g3d_mouse_cancel(int x, int y) {
