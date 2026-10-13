@@ -6,6 +6,7 @@
 
 static struct vs_in g_vsin;
 
+static unsigned g_board[20 * 20] = {0};
 static int g_board_loaded;
 
 static g3d_buffer_t   * g_vsin_buf;
@@ -37,7 +38,7 @@ void g3d_deinit(void) {
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    unsigned brd[20 * 20] = {0};
+    unsigned * brd = g_board;
     brd[21] = brd[22] = brd[23] = brd[24] = 1;
     brd[41] = brd[61] = brd[64] = 1;
     brd[42] = 3;
@@ -96,7 +97,15 @@ void g3d_mouse_down(int x, int y) {
 
   float2 p = { x, y };
   g_vsin.pick = frag_scr_id(p);
-  g_vsin.mouse = (int2){ -1, -1 };
+  if (g_vsin.pick.x < 0) return;
+
+  unsigned id = g_board[g_vsin.brd_sz.x * g_vsin.pick.y + g_vsin.pick.x];
+  if (id == 2) {
+    g_vsin.mouse = (int2){ -1, -1 };
+    return;
+  }
+
+  g_vsin.pick = (int2){ -1, -1 };
 }
 void g3d_mouse_up(int x, int y) {
   cancel();
