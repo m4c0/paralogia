@@ -82,17 +82,34 @@ static void cancel() {
   g_vsin.pick = (int2){ -1, -1 };
 }
 
-static inline int sign(int n) {
-  return n < 0 ? -1 : n > 0 ? 1 : 0;
-}
+static inline int abs(int n) { return n > 0 ? n : -n; }
+static inline int sign(int n) { return n < 0 ? -1 : n > 0 ? 1 : 0; }
 void g3d_mouse_move(int x, int y) {
   float2 p = { x, y };
   g_vsin.mouse = frag_scr_id(p);
   if (g_vsin.pick.x < 0) return;
 
-  int sx = sign(g_vsin.mouse.x - g_vsin.pick.x);
-  int sy = sign(g_vsin.mouse.y - g_vsin.pick.y);
+  int dx = g_vsin.mouse.x - g_vsin.pick.x;
+  int dy = g_vsin.mouse.y - g_vsin.pick.y;
+  int sx = sign(dx);
+  int sy = sign(dy);
   if ((sx && sy) || (!sx && !sy)) {
+    g_vsin.mouse = (int2){ -1, -1 };
+    return;
+  }
+
+  int valid = 1;
+  for (int d = 1; valid && d <= abs(dx + dy); d++) {
+    int ix = g_vsin.pick.x + d * sx;
+    int iy = g_vsin.pick.y + d * sy;
+    int i = ix + g_vsin.brd_sz.x * iy;
+    switch (g_board[i]) {
+      case 1:
+      case 2: valid = 0; break;
+      default: break;
+    }
+  }
+  if (!valid) {
     g_vsin.mouse = (int2){ -1, -1 };
     return;
   }
