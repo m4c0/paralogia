@@ -82,15 +82,20 @@ static void cancel() {
   g_vsin.pick = (int2){ -1, -1 };
 }
 
+static inline int sign(int n) {
+  return n < 0 ? -1 : n > 0 ? 1 : 0;
+}
 void g3d_mouse_move(int x, int y) {
   float2 p = { x, y };
   g_vsin.mouse = frag_scr_id(p);
   if (g_vsin.pick.x < 0) return;
 
-  if (g_vsin.pick.x == g_vsin.mouse.x) return;
-  if (g_vsin.pick.y == g_vsin.mouse.y) return;
-
-  g_vsin.mouse = (int2){ -1, -1 };
+  int sx = sign(g_vsin.mouse.x - g_vsin.pick.x);
+  int sy = sign(g_vsin.mouse.y - g_vsin.pick.y);
+  if ((sx && sy) || (!sx && !sy)) {
+    g_vsin.mouse = (int2){ -1, -1 };
+    return;
+  }
 }
 void g3d_mouse_down(int x, int y) {
   g3d_mouse_move(x, y);
