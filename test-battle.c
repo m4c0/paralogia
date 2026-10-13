@@ -135,10 +135,17 @@ void g3d_mouse_up(int x, int y) {
 
   unsigned i = g_vsin.brd_sz.x * g_vsin.pick.y + g_vsin.pick.x;
   unsigned j = g_vsin.brd_sz.x * g_vsin.mouse.y + g_vsin.mouse.x;
-  g_board[j] = g_board[i];
-  g_board[i] = 0;
-
-  g_board_loaded = 0;
+  switch (g_board[j]) {
+    case 0:
+      g_board[j] = g_board[i];
+      g_board[i] = 0;
+      g_board_loaded = 0;
+      break;
+    case 3:
+      g_board[j] = 0;
+      g_board_loaded = 0;
+      break;
+  }
 
   cancel();
 }
