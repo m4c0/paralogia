@@ -48,7 +48,6 @@ typedef enum {
   g3d_key_right,
   g3d_key_action,
   g3d_key_cancel,
-  g3d_key_max,
 } g3d_key_t;
 void g3d_key(g3d_key_t key, int down);
 
