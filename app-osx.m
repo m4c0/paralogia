@@ -38,6 +38,11 @@
     case 13: g3d_key(g3d_key_action, state); break;
     case 27: g3d_key(g3d_key_cancel, state); break;
     case 32: g3d_key(g3d_key_action, state); break;
+
+    case '0': case '1': case '2':
+    case '3': case '4': case '5':
+    case '6': case '7': case '8':
+    case '9': g3d_key(g3d_key_0 + (c - '0'), state); break;
   }
 }
 - (void)keyDown:(NSEvent *)event {

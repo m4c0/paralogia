@@ -153,8 +153,16 @@ void g3d_mouse_cancel(int x, int y) {
   cancel();
 }
 
+static void place(int who) {
+  if (g_vsin.mouse.x < 0) return;
+  if (who > 3) return;
+
+  g_board[g_vsin.brd_sz.x * g_vsin.mouse.y + g_vsin.mouse.x] = who;
+  g_board_loaded = 0;
+}
 void g3d_key(g3d_key_t key, int down) {
   if (key == g3d_key_cancel) cancel();
+  if (down && key >= g3d_key_0 && key <= g3d_key_9) place(key - g3d_key_0);
 }
 
 void g3d_scroll(float x, float y) {
