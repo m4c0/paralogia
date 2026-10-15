@@ -89,6 +89,7 @@ void g3d_mouse_move(int x, int y) {
   float2 p = { x, y };
   g_vsin.mouse = frag_scr_id(p);
   if (g_vsin.pick.x < 0) return;
+  if (g_vsin.mouse.x < 0) return;
 
   int dx = g_vsin.mouse.x - g_vsin.pick.x;
   int dy = g_vsin.mouse.y - g_vsin.pick.y;
