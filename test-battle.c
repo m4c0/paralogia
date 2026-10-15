@@ -45,7 +45,7 @@ void g3d_deinit(void) {
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    t->load_buffer(g_board_buf, g_board, sizeof(unsigned) * 20 * 20);
+    t->load_buffer(g_board_buf, g_board, sizeof(int2) * 20 * 20);
     g_board_loaded = 1;
   }
 
