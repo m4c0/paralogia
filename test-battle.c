@@ -75,8 +75,8 @@ static inline int2 frag_scr_id(float2 p) {
   int2 res;
   res.x = (int)floor(frag_pos_x(p.x / g_vsin.scr_sz.x, g_vsin));
   res.y = (int)floor(frag_pos_y(p.y / g_vsin.scr_sz.y, g_vsin));
-  if (res.x < 0 || res.x > g_vsin.brd_sz.x) res.x = res.y = -1;
-  if (res.y < 0 || res.y > g_vsin.brd_sz.y) res.x = res.y = -1;
+  if (res.x < 0 || res.x >= g_vsin.brd_sz.x) res.x = res.y = -1;
+  if (res.y < 0 || res.y >= g_vsin.brd_sz.y) res.x = res.y = -1;
   return res;
 }
 static void cancel() {
