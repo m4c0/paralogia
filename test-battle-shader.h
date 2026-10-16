@@ -41,9 +41,9 @@ struct vs_in {
   float  scale;
   float  p0;
 };
-struct brd_s {
+typedef struct brd_s {
   int piece;
-};
+} brd_t;
 
 static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;
