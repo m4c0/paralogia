@@ -4,7 +4,7 @@
 
 #include "test-battle-shader.h"
 
-static struct vs_in g_vsin;
+static glb_t g_vsin;
 
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
@@ -22,7 +22,7 @@ static inline float clamp(float x, float a, float b) {
 int g3d_init(const g3d_init_t * t) {
   g_ppl = t->new_pipeline(t->ptr, "test-battle-shader", 2, 0);
 
-  g_vsin_buf = t->new_buffer(t->ptr, sizeof(struct vs_in));
+  g_vsin_buf = t->new_buffer(t->ptr, sizeof(glb_t));
   g_vsin.brd_sz = (int2){ 20, 20 };
   g_vsin.mouse = (int2){ -1, -1 };
   g_vsin.pick = (int2){ -1, -1 };
@@ -52,7 +52,7 @@ int g3d_frame(const g3d_frame_t * t) {
   g_vsin.trans.x = clamp(g_vsin.trans.x, 0, g_vsin.brd_sz.x);
   g_vsin.trans.y = clamp(g_vsin.trans.y, 0, g_vsin.brd_sz.y);
 
-  t->load_buffer(g_vsin_buf, &g_vsin, sizeof(struct vs_in));
+  t->load_buffer(g_vsin_buf, &g_vsin, sizeof(glb_t));
 
   g3d_frame_render_t rnd = {
     .ptr       = t->ptr,

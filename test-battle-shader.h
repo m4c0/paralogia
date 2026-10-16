@@ -32,7 +32,7 @@ typedef struct { float x, y, z, w; } float4;
 typedef struct { int x, y; } int2;
 #endif
 
-struct vs_in {
+typedef struct glb_s {
   int2   brd_sz;
   float2 scr_sz;
   int2   mouse;
@@ -40,7 +40,7 @@ struct vs_in {
   float2 trans;
   float  scale;
   float  p0;
-};
+} glb_t;
 typedef struct brd_s {
   int piece;
 } brd_t;
@@ -48,16 +48,16 @@ typedef struct brd_s {
 static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;
 }
-static inline float frag_pos_x(float x, struct vs_in vsin) {
+static inline float frag_pos_x(float x, glb_t vsin) {
   return vsin.scale * aspect(vsin.scr_sz.x, vsin.scr_sz.y) * (x * 2.f - 1.f) + vsin.trans.x;
 }
-static inline float frag_pos_y(float y, struct vs_in vsin) {
+static inline float frag_pos_y(float y, glb_t vsin) {
   return vsin.scale * aspect(vsin.scr_sz.y, vsin.scr_sz.x) * (y * 2.f - 1.f) + vsin.trans.y;
 }
 
 #if HLSL || METAL
 #if HLSL
-StructuredBuffer<vs_in> b0 : register(t0);
+StructuredBuffer<glb_t> b0 : register(t0);
 StructuredBuffer<brd_t> b1 : register(t1);
 #endif
 
@@ -91,7 +91,7 @@ static inline float3 c_pick(float3 c, float2 p) {
   return float3(c.x, c.yz * 0.1);
 }
 
-static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
+static inline float3 c_track(float3 c, float2 p, glb_t vsin) {
   if (any(vsin.pick < 0) || any(vsin.pick >= vsin.brd_sz)) return c;
   if (any(vsin.mouse < 0) || any(vsin.mouse >= vsin.brd_sz)) return c;
 
@@ -105,7 +105,7 @@ static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
 
 static inline float3 c_inside(
     B(const device brd_t * b1)
-    float3 c, float2 p, vs_in vsin) {
+    float3 c, float2 p, glb_t vsin) {
   if (any(p < 0)) return c;
   if (any(p >= float2(vsin.brd_sz))) return c;
 
@@ -133,11 +133,11 @@ static inline float3 c_inside(
   return c;
 }
 
-static inline float2 frag_pos(float2 p, vs_in vsin) {
+static inline float2 frag_pos(float2 p, glb_t vsin) {
   return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
 }
 FRAGMENT fs_out fs_main(
-    BUF(0, const device vs_in * b0)
+    BUF(0, const device glb_t * b0)
     BUF(1, const device brd_t * b1)
     vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
