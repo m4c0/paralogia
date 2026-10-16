@@ -5,7 +5,6 @@
 #  define IID    : SV_InstanceID
 #  define TGT(n) : SV_Target##n
 #  define IN
-#  define BUF(...)
 #  define B(...)
 #  define VERTEX   [shader("vertex")]
 #  define FRAGMENT [shader("pixel")]
@@ -22,7 +21,6 @@ using namespace metal;
 #  define VID    [[vertex_id]]
 #  define IID    [[instance_id]]
 #  define IN     [[stage_in]]
-#  define BUF(N, X) X [[buffer(N)]],
 #  define B(N) N,
 #  define VERTEX   vertex
 #  define FRAGMENT fragment
@@ -137,8 +135,8 @@ static inline float2 frag_pos(float2 p, glb_t vsin) {
   return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
 }
 FRAGMENT fs_out fs_main(
-    BUF(0, const device glb_t * b0)
-    BUF(1, const device brd_t * b1)
+    B(const device glb_t * b0 [[buffer(0)]])
+    B(const device brd_t * b1 [[buffer(1)]])
     vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
 
