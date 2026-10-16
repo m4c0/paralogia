@@ -6,7 +6,7 @@
 
 static struct vs_in g_vsin;
 
-static struct brd_s g_board[20 * 20] = {0};
+static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
 static g3d_buffer_t   * g_vsin_buf;
@@ -31,12 +31,12 @@ int g3d_init(const g3d_init_t * t) {
 
   g_board_buf = t->new_buffer(t->ptr, sizeof(int2) * 20 * 20);
 
-  struct brd_s * brd = g_board;
-  brd[21] = brd[22] = brd[23] = brd[24] = (struct brd_s){ 1 };
-  brd[41] = brd[61] = brd[64] = (struct brd_s){ 1 };
-  brd[42] = (struct brd_s) { 3 };
-  brd[81] = (struct brd_s) { 2 };
-  brd[104] = (struct brd_s) { 2 };
+  brd_t * brd = g_board;
+  brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
+  brd[41] = brd[61] = brd[64] = (brd_t){ 1 };
+  brd[42] = (brd_t) { 3 };
+  brd[81] = (brd_t) { 2 };
+  brd[104] = (brd_t) { 2 };
 
   return g_ppl ? 0 : 1;
 }
@@ -123,7 +123,7 @@ void g3d_mouse_down(int x, int y) {
   g_vsin.pick = frag_scr_id(p);
   if (g_vsin.pick.x < 0) return;
 
-  struct brd_s id = g_board[g_vsin.brd_sz.x * g_vsin.pick.y + g_vsin.pick.x];
+  brd_t id = g_board[g_vsin.brd_sz.x * g_vsin.pick.y + g_vsin.pick.x];
   if (id.piece == 2) {
     g_vsin.mouse = (int2){ -1, -1 };
     return;
@@ -139,11 +139,11 @@ void g3d_mouse_up(int x, int y) {
   switch (g_board[j].piece) {
     case 0:
       g_board[j] = g_board[i];
-      g_board[i] = (struct brd_s){ 0 };
+      g_board[i] = (brd_t){ 0 };
       g_board_loaded = 0;
       break;
     case 3:
-      g_board[j] = (struct brd_s){ 0 };
+      g_board[j] = (brd_t){ 0 };
       g_board_loaded = 0;
       break;
   }
@@ -158,7 +158,7 @@ static void place(int who) {
   if (g_vsin.mouse.x < 0) return;
   if (who > 3) return;
 
-  g_board[g_vsin.brd_sz.x * g_vsin.mouse.y + g_vsin.mouse.x] = (struct brd_s){ who };
+  g_board[g_vsin.brd_sz.x * g_vsin.mouse.y + g_vsin.mouse.x] = (brd_t){ who };
   g_board_loaded = 0;
 }
 void g3d_key(g3d_key_t key, int down) {

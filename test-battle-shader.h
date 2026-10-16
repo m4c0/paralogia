@@ -58,7 +58,7 @@ static inline float frag_pos_y(float y, struct vs_in vsin) {
 #if HLSL || METAL
 #if HLSL
 StructuredBuffer<vs_in> b0 : register(t0);
-StructuredBuffer<brd_s> b1 : register(t1);
+StructuredBuffer<brd_t> b1 : register(t1);
 #endif
 
 struct vs_out {
@@ -104,7 +104,7 @@ static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
 }
 
 static inline float3 c_inside(
-    B(const device brd_s * b1)
+    B(const device brd_t * b1)
     float3 c, float2 p, vs_in vsin) {
   if (any(p < 0)) return c;
   if (any(p >= float2(vsin.brd_sz))) return c;
@@ -138,7 +138,7 @@ static inline float2 frag_pos(float2 p, vs_in vsin) {
 }
 FRAGMENT fs_out fs_main(
     BUF(0, const device vs_in * b0)
-    BUF(1, const device brd_s * b1)
+    BUF(1, const device brd_t * b1)
     vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
 
