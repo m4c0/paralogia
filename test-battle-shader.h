@@ -41,6 +41,9 @@ struct vs_in {
   float  scale;
   float  p0;
 };
+struct brd_s {
+  int piece;
+};
 
 static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;
@@ -55,7 +58,7 @@ static inline float frag_pos_y(float y, struct vs_in vsin) {
 #if HLSL || METAL
 #if HLSL
 StructuredBuffer<vs_in> b0 : register(t0);
-StructuredBuffer<uint2> b1 : register(t1);
+StructuredBuffer<brd_s> b1 : register(t1);
 #endif
 
 struct vs_out {
@@ -101,7 +104,7 @@ static inline float3 c_track(float3 c, float2 p, vs_in vsin) {
 }
 
 static inline float3 c_inside(
-    B(const device uint2 * b1)
+    B(const device brd_s * b1)
     float3 c, float2 p, vs_in vsin) {
   if (any(p < 0)) return c;
   if (any(p >= float2(vsin.brd_sz))) return c;
@@ -121,7 +124,7 @@ static inline float3 c_inside(
   c = c_track(c, p, vsin);
 
   uint i = id.y * uint(vsin.brd_sz.x) + id.x;
-  switch (b1[i].x) {
+  switch (b1[i].piece) {
     case 1: c = 0.3; break;
     case 2: c = mix(0.5, c, step(0, length(uv) - 0.3)); break;
     case 3: c = mix(0.8, c, step(0, length(uv) - 0.3)); break;
@@ -135,7 +138,7 @@ static inline float2 frag_pos(float2 p, vs_in vsin) {
 }
 FRAGMENT fs_out fs_main(
     BUF(0, const device vs_in * b0)
-    BUF(1, const device uint2 * b1)
+    BUF(1, const device brd_s * b1)
     vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
 
