@@ -6,8 +6,8 @@
 #  define TGT(n) : SV_Target##n
 #  define IN
 #  define B(...)
-#  define VERTEX   [shader("vertex")]
-#  define FRAGMENT [shader("pixel")]
+#  define vertex   [shader("vertex")]
+#  define fragment [shader("pixel")]
 #  define fract frac
 #  define mix   lerp
 #elif METAL
@@ -22,8 +22,6 @@ using namespace metal;
 #  define IID    [[instance_id]]
 #  define IN     [[stage_in]]
 #  define B(N) N,
-#  define VERTEX   vertex
-#  define FRAGMENT fragment
 #else
 typedef struct { float x, y; } float2;
 typedef struct { float x, y, z, w; } float4;
@@ -67,7 +65,7 @@ struct fs_out {
   float4 colour TGT(0);
 };
 
-VERTEX vs_out vs_main(uint vid VID) {
+vertex vs_out vs_main(uint vid VID) {
   float2 fp = float2(vid & 1, (vid >> 1) & 1);
   float2 p = fp * 2 - 1;
 
@@ -134,7 +132,7 @@ static inline float3 c_inside(
 static inline float2 frag_pos(float2 p, glb_t vsin) {
   return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
 }
-FRAGMENT fs_out fs_main(
+fragment fs_out fs_main(
     B(const device glb_t * b0 [[buffer(0)]])
     B(const device brd_t * b1 [[buffer(1)]])
     vs_out vs IN) {
