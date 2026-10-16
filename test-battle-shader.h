@@ -56,6 +56,8 @@ static inline float frag_pos_y(float y, glb_t vsin) {
 StructuredBuffer<glb_t> b0 : register(t0);
 StructuredBuffer<brd_t> b1 : register(t1);
 #endif
+#define B0 B(const device glb_t * b0)
+#define B1 B(const device brd_t * b1)
 
 struct vs_out {
   float2 frag_pos LOC(0);
@@ -99,9 +101,7 @@ static inline float3 c_track(float3 c, float2 p, glb_t vsin) {
   return mix(float3(0.5, 0, 0), c, d);
 }
 
-static inline float3 c_inside(
-    B(const device brd_t * b1)
-    float3 c, float2 p, glb_t vsin) {
+static inline float3 c_inside(B1 float3 c, float2 p, glb_t vsin) {
   if (any(p < 0)) return c;
   if (any(p >= float2(vsin.brd_sz))) return c;
 
@@ -132,10 +132,7 @@ static inline float3 c_inside(
 static inline float2 frag_pos(float2 p, glb_t vsin) {
   return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
 }
-fragment fs_out fs_main(
-    B(const device glb_t * b0 [[buffer(0)]])
-    B(const device brd_t * b1 [[buffer(1)]])
-    vs_out vs IN) {
+fragment fs_out fs_main(B0 B1 vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
 
   float3 c = float3(0.05, 0.10, 0.15);
