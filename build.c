@@ -40,7 +40,7 @@ static int run(char ** args) {
 #define RUN(...) do { char * args[] = { __VA_ARGS__, 0 }; if (run(args)) return 1; } while (0)
 
 #ifdef __APPLE__
-#  define SHADER(x) RUN("xcrun", "-sdk", "macosx", "metal", "-DMETAL", "-x", "metal", x".h", "-o", "app.app/Contents/Resources/"x".metallib");
+#  define SHADER(x) RUN("xcrun", "-sdk", "macosx", "metal", "-DMETAL", "-x", "metal", x".shd.h", "-o", "app.app/Contents/Resources/"x".metallib");
 #elif _WIN32
 static char * dxc(void) {
   char * win_kit_version = getenv("WIN_KIT_VERSION");
@@ -53,8 +53,8 @@ static char * dxc(void) {
   return strdup(argv0);
 }
 #define SHADER(x) \
-  RUN(dxc(), "-D", "HLSL", "-T", "vs_5_0", "-E", "vs_main", x".h", "-Fo", x".vert.dxil"); \
-  RUN(dxc(), "-D", "HLSL", "-T", "ps_5_0", "-E", "fs_main", x".h", "-Fo", x".frag.dxil");
+  RUN(dxc(), "-D", "HLSL", "-T", "vs_5_0", "-E", "vs_main", x".shd.h", "-Fo", x".vert.dxil"); \
+  RUN(dxc(), "-D", "HLSL", "-T", "ps_5_0", "-E", "fs_main", x".shd.h", "-Fo", x".frag.dxil");
 #endif
 
 int main() {
@@ -71,7 +71,7 @@ int main() {
   RUN("clang", "-Wall", "-gdwarf", "-c", "-o", "app.o", "app-win.c");
 #endif
 
-  SHADER("test-battle-shader");
+  SHADER("test-battle");
 
 #if _WIN32
   RUN("llvm-rc", "/FO", "test-battle.res", "test-battle.rc");

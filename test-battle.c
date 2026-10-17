@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "test-battle-shader.h"
+#include "test-battle.shd.h"
 
 static glb_t g_glb;
 
