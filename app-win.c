@@ -681,16 +681,23 @@ static LRESULT window_proc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param) 
     case WM_KEYDOWN:
       if (HIWORD(l_param) & KF_REPEAT) return 0;
       state = 1;
-    case WM_KEYUP:
-      switch (LOWORD(w_param)) {
+    case WM_KEYUP: {
+      DWORD wp = LOWORD(w_param);
+      switch (wp) {
         case VK_LEFT:   g3d_key(g3d_key_left,   state); break;
         case VK_RIGHT:  g3d_key(g3d_key_right,  state); break;
         case VK_UP:     g3d_key(g3d_key_up,     state); break;
         case VK_DOWN:   g3d_key(g3d_key_down,   state); break;
         case VK_SPACE:  g3d_key(g3d_key_action, state); break;
         case VK_ESCAPE: g3d_key(g3d_key_cancel, state); break;
+
+        default: {
+          if (wp >= 0x30 && wp <= 0x39) g3d_key(g3d_key_0 + (wp - 0x30), state);
+          break;
+        }
       }
       return 0;
+    }
 
     case WM_SIZE:
       if (d3d_resize(LOWORD(l_param), HIWORD(l_param))) PostQuitMessage(1);
