@@ -1,2 +1,4 @@
-test-battle-shader vert "test-battle-shader.vert.dxil"
-test-battle-shader frag "test-battle-shader.frag.dxil"
+test-battle vert "test-battle.vert.dxil"
+test-battle frag "test-battle.frag.dxil"
+test-battle.mov vert "test-battle.mov.vert.dxil"
+test-battle.mov frag "test-battle.mov.frag.dxil"

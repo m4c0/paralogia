@@ -72,6 +72,7 @@ int main() {
 #endif
 
   SHADER("test-battle");
+  SHADER("test-battle.mov");
 
 #if _WIN32
   RUN("llvm-rc", "/FO", "test-battle.res", "test-battle.rc");
