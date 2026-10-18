@@ -19,6 +19,6 @@ vertex vs_out vs_main(uint vid VID) {
 }
 fragment fs_out fs_main() {
   fs_out res;
-  res.colour = float4(1, 1, 1, 1);
+  res.colour = float4(1, 1, 0, 1);
   return res;
 }

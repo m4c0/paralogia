@@ -12,6 +12,7 @@ static int g_board_loaded;
 static g3d_buffer_t   * g_glb_buf;
 static g3d_buffer_t   * g_board_buf;
 static g3d_pipeline_t * g_ppl;
+static g3d_pipeline_t * g_ppl_mov;
 
 static inline float clamp(float x, float a, float b) {
   if (x < a) return a;
@@ -21,6 +22,7 @@ static inline float clamp(float x, float a, float b) {
 
 int g3d_init(const g3d_init_t * t) {
   g_ppl = t->new_pipeline(t->ptr, "test-battle", 2, 0);
+  g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 0, 0);
 
   g_glb_buf = t->new_buffer(t->ptr, sizeof(glb_t));
   g_glb.brd_sz = (int2){ 20, 20 };
@@ -58,6 +60,16 @@ int g3d_frame(const g3d_frame_t * t) {
     .ptr       = t->ptr,
     .pipeline  = g_ppl,
     .buffers   = (g3d_buffer_t *[]) { g_glb_buf, g_board_buf, 0 },
+    .samplers  = (g3d_sampler_t *[]) { 0 },
+    .textures  = (g3d_texture_t *[]) { 0 },
+    .instances = 1,
+  };
+  t->render(&rnd);
+
+  rnd = (g3d_frame_render_t) {
+    .ptr       = t->ptr,
+    .pipeline  = g_ppl_mov,
+    .buffers   = (g3d_buffer_t *[]) { 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
     .instances = 1,
