@@ -1,27 +1,4 @@
-#include "common.shd.h"
-
-typedef struct glb_s {
-  int2   brd_sz;
-  float2 scr_sz;
-  int2   mouse;
-  int2   pick;
-  float2 trans;
-  float  scale;
-  float  p0;
-} glb_t;
-typedef struct brd_s {
-  int piece;
-} brd_t;
-
-static inline float aspect(float a, float b) {
-  return (a > b) ? a / b : 1;
-}
-static inline float frag_pos_x(float x, glb_t vsin) {
-  return vsin.scale * aspect(vsin.scr_sz.x, vsin.scr_sz.y) * (x * 2.f - 1.f) + vsin.trans.x;
-}
-static inline float frag_pos_y(float y, glb_t vsin) {
-  return vsin.scale * aspect(vsin.scr_sz.y, vsin.scr_sz.x) * (y * 2.f - 1.f) + vsin.trans.y;
-}
+#include "test-battle.com.shd.h"
 
 #if HLSL || METAL
 #if HLSL
@@ -101,9 +78,6 @@ static inline float3 c_inside(B1 float3 c, float2 p, glb_t vsin) {
   return c;
 }
 
-static inline float2 frag_pos(float2 p, glb_t vsin) {
-  return float2(frag_pos_x(p.x, vsin), frag_pos_y(p.y, vsin));
-}
 fragment fs_out fs_main(B0 B1 vs_out vs IN) {
   float2 p = frag_pos(vs.frag_pos, b0[0]);
 

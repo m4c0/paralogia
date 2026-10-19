@@ -1,4 +1,4 @@
-#include "common.shd.h"
+#include "test-battle.com.shd.h"
 
 struct vs_out {
   float2 frag_pos LOC(0);
