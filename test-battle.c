@@ -6,11 +6,13 @@
 
 static glb_t g_glb;
 
+static mov_t g_movs[20] = {0};
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
 static g3d_buffer_t   * g_glb_buf;
 static g3d_buffer_t   * g_board_buf;
+static g3d_buffer_t   * g_mov_buf;
 static g3d_pipeline_t * g_ppl;
 static g3d_pipeline_t * g_ppl_mov;
 
@@ -22,7 +24,7 @@ static inline float clamp(float x, float a, float b) {
 
 int g3d_init(const g3d_init_t * t) {
   g_ppl = t->new_pipeline(t->ptr, "test-battle", 2, 0);
-  g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 0, 0);
+  g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 2, 0);
 
   g_glb_buf = t->new_buffer(t->ptr, sizeof(glb_t));
   g_glb.brd_sz = (int2){ 20, 20 };
@@ -31,7 +33,8 @@ int g3d_init(const g3d_init_t * t) {
   g_glb.scale = 6;
   g_glb.trans = (float2){ 3, 3 };
 
-  g_board_buf = t->new_buffer(t->ptr, sizeof(int2) * 20 * 20);
+  g_board_buf = t->new_buffer(t->ptr, sizeof(brd_t) * 20 * 20);
+  g_mov_buf = t->new_buffer(t->ptr, sizeof(mov_t) * 20);
 
   brd_t * brd = g_board;
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
@@ -40,6 +43,9 @@ int g3d_init(const g3d_init_t * t) {
   brd[81] = (brd_t) { 2 };
   brd[104] = (brd_t) { 2 };
 
+  g_movs[0] = (mov_t) { {3,5}, {8,5} };
+  g_movs[1] = (mov_t) { {4,8}, {9,8} };
+
   return g_ppl ? 0 : 1;
 }
 void g3d_deinit(void) {
@@ -47,7 +53,8 @@ void g3d_deinit(void) {
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    t->load_buffer(g_board_buf, g_board, sizeof(int2) * 20 * 20);
+    t->load_buffer(g_mov_buf, g_movs, sizeof(mov_t) * 20);
+    t->load_buffer(g_board_buf, g_board, sizeof(brd_t) * 20 * 20);
     g_board_loaded = 1;
   }
 
@@ -69,10 +76,10 @@ int g3d_frame(const g3d_frame_t * t) {
   rnd = (g3d_frame_render_t) {
     .ptr       = t->ptr,
     .pipeline  = g_ppl_mov,
-    .buffers   = (g3d_buffer_t *[]) { 0 },
+    .buffers   = (g3d_buffer_t *[]) { g_glb_buf, g_mov_buf, 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
-    .instances = 1,
+    .instances = 2,
   };
   t->render(&rnd);
 

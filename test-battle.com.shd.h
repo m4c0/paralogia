@@ -12,6 +12,10 @@ typedef struct glb_s {
 typedef struct brd_s {
   int piece;
 } brd_t;
+typedef struct mov_s {
+  int2 from;
+  int2 to;
+} mov_t;
 
 static inline float aspect(float a, float b) {
   return (a > b) ? a / b : 1;

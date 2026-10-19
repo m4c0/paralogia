@@ -2,8 +2,10 @@
 
 #if HLSL
 StructuredBuffer<glb_t> b0 : register(t0);
+StructuredBuffer<mov_t> b1 : register(t1);
 #endif
 #define B0 B(const device glb_t * b0)
+#define B1 B(const device mov_t * b1)
 
 struct vs_out {
   float2 pp  LOC(0);
@@ -15,11 +17,11 @@ struct fs_out {
   float4 colour TGT(0);
 };
 
-vertex vs_out vs_main(B0 uint vid VID) {
+vertex vs_out vs_main(B0 B1 uint vid VID, uint iid IID) {
   float2 fp = float2(vid & 1, (vid >> 1) & 1);
 
-  float2 p0 = float2(b0[0].pick) + 0.5;
-  float2 p1 = float2(b0[0].mouse) + 0.5;
+  float2 p0 = float2(b1[iid].from) + 0.5;
+  float2 p1 = float2(b1[iid].to) + 0.5;
   float2 aa = min(p0, p1) - 0.5;
   float2 bb = max(p0, p1) + 0.5;
 
