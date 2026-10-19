@@ -16,8 +16,11 @@ struct fs_out {
 vertex vs_out vs_main(B0 uint vid VID) {
   float2 fp = float2(vid & 1, (vid >> 1) & 1);
 
-  const float2 p0 = float2(b0[0].pick);
-  const float2 p1 = float2(b0[0].mouse) + float2(1, 1);
+  float2 p0 = float2(b0[0].pick);
+  float2 p1 = float2(b0[0].mouse);
+  p0 += step(float2(0, 0), p0 - p1);
+  p1 += step(float2(0, 0), p1 - p0);
+
   float2 pp = p0 + fp * (p1 - p0);
   float ax = aspect(b0[0].scr_sz.x, b0[0].scr_sz.y);
   float ay = aspect(b0[0].scr_sz.y, b0[0].scr_sz.x);
