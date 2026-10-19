@@ -1,6 +1,5 @@
 #include "test-battle.com.shd.h"
 
-#if HLSL || METAL
 #if HLSL
 StructuredBuffer<glb_t> b0 : register(t0);
 StructuredBuffer<brd_t> b1 : register(t1);
@@ -88,4 +87,3 @@ fragment fs_out fs_main(B0 B1 vs_out vs IN) {
   res.colour = float4(c, 1);
   return res;
 }
-#endif

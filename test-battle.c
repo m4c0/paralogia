@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "test-battle.shd.h"
+#include "test-battle.com.shd.h"
 
 static glb_t g_glb;
 
