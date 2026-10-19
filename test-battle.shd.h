@@ -37,18 +37,6 @@ static inline float3 c_pick(float3 c, float2 p) {
   return float3(c.x, c.yz * 0.1);
 }
 
-static inline float3 c_track(float3 c, float2 p, glb_t vsin) {
-  if (any(vsin.pick < 0) || any(vsin.pick >= vsin.brd_sz)) return c;
-  if (any(vsin.mouse < 0) || any(vsin.mouse >= vsin.brd_sz)) return c;
-
-  float2 pa = p - float2(vsin.pick) - 0.5;
-  float2 ba = float2(vsin.mouse - vsin.pick);
-  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.f, 1.f);
-  float d = step(0, length(pa - ba * h) - 0.05);
-
-  return mix(float3(0.5, 0, 0), c, d);
-}
-
 static inline float3 c_inside(B1 float3 c, float2 p, glb_t vsin) {
   if (any(p < 0)) return c;
   if (any(p >= float2(vsin.brd_sz))) return c;
@@ -64,8 +52,6 @@ static inline float3 c_inside(B1 float3 c, float2 p, glb_t vsin) {
   c = c_border(c, uv);
   if (all(id == vsin.mouse)) c = c_hover(c, uv);
   if (all(id == vsin.pick)) c = c_pick(c, uv);
-
-  c = c_track(c, p, vsin);
 
   uint i = id.y * uint(vsin.brd_sz.x) + id.x;
   switch (b1[i].piece) {
