@@ -10,10 +10,11 @@ static mov_t g_movs[20] = {0};
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
-static g3d_buffer_t   * g_glb_buf;
-static g3d_buffer_t   * g_board_buf;
-static g3d_buffer_t   * g_mov_buf;
-static g3d_pipeline_t * g_ppl;
+static g3d_buffer_t * g_buf_glb;
+static g3d_buffer_t * g_buf_brd;
+static g3d_buffer_t * g_buf_mov;
+
+static g3d_pipeline_t * g_ppl_brd;
 static g3d_pipeline_t * g_ppl_mov;
 
 static inline float clamp(float x, float a, float b) {
@@ -23,18 +24,18 @@ static inline float clamp(float x, float a, float b) {
 }
 
 int g3d_init(const g3d_init_t * t) {
-  g_ppl = t->new_pipeline(t->ptr, "test-battle", 2, 0);
+  g_ppl_brd = t->new_pipeline(t->ptr, "test-battle", 2, 0);
   g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 2, 0);
 
-  g_glb_buf = t->new_buffer(t->ptr, sizeof(glb_t));
+  g_buf_glb = t->new_buffer(t->ptr, sizeof(glb_t));
   g_glb.brd_sz = (int2){ 20, 20 };
   g_glb.mouse = (int2){ -1, -1 };
   g_glb.pick = (int2){ -1, -1 };
   g_glb.scale = 6;
   g_glb.trans = (float2){ 3, 3 };
 
-  g_board_buf = t->new_buffer(t->ptr, sizeof(brd_t) * 20 * 20);
-  g_mov_buf = t->new_buffer(t->ptr, sizeof(mov_t) * 20);
+  g_buf_brd = t->new_buffer(t->ptr, sizeof(brd_t) * 20 * 20);
+  g_buf_mov = t->new_buffer(t->ptr, sizeof(mov_t) * 20);
 
   brd_t * brd = g_board;
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
@@ -46,27 +47,27 @@ int g3d_init(const g3d_init_t * t) {
   g_movs[0] = (mov_t) { {3,5}, {8,5} };
   g_movs[1] = (mov_t) { {4,8}, {9,8} };
 
-  return g_ppl ? 0 : 1;
+  return g_ppl_brd ? 0 : 1;
 }
 void g3d_deinit(void) {
 }
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    t->load_buffer(g_mov_buf, g_movs, sizeof(mov_t) * 20);
-    t->load_buffer(g_board_buf, g_board, sizeof(brd_t) * 20 * 20);
+    t->load_buffer(g_buf_mov, g_movs, sizeof(mov_t) * 20);
+    t->load_buffer(g_buf_brd, g_board, sizeof(brd_t) * 20 * 20);
     g_board_loaded = 1;
   }
 
   g_glb.trans.x = clamp(g_glb.trans.x, 0, g_glb.brd_sz.x);
   g_glb.trans.y = clamp(g_glb.trans.y, 0, g_glb.brd_sz.y);
 
-  t->load_buffer(g_glb_buf, &g_glb, sizeof(glb_t));
+  t->load_buffer(g_buf_glb, &g_glb, sizeof(glb_t));
 
   g3d_frame_render_t rnd = {
     .ptr       = t->ptr,
-    .pipeline  = g_ppl,
-    .buffers   = (g3d_buffer_t *[]) { g_glb_buf, g_board_buf, 0 },
+    .pipeline  = g_ppl_brd,
+    .buffers   = (g3d_buffer_t *[]) { g_buf_glb, g_buf_brd, 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
     .instances = 1,
@@ -76,7 +77,7 @@ int g3d_frame(const g3d_frame_t * t) {
   rnd = (g3d_frame_render_t) {
     .ptr       = t->ptr,
     .pipeline  = g_ppl_mov,
-    .buffers   = (g3d_buffer_t *[]) { g_glb_buf, g_mov_buf, 0 },
+    .buffers   = (g3d_buffer_t *[]) { g_buf_glb, g_buf_mov, 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
     .instances = 2,
