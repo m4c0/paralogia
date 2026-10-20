@@ -4,9 +4,11 @@
 
 #include "test-battle.com.shd.h"
 
+#define MAX_PIECES 20
+
 static glb_t g_glb;
 
-static mov_t g_movs[20] = {0};
+static mov_t g_movs[MAX_PIECES] = {0};
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
@@ -35,7 +37,7 @@ int g3d_init(const g3d_init_t * t) {
   g_glb.trans = (float2){ 3, 3 };
 
   g_buf_brd = t->new_buffer(t->ptr, sizeof(brd_t) * 20 * 20);
-  g_buf_mov = t->new_buffer(t->ptr, sizeof(mov_t) * 20);
+  g_buf_mov = t->new_buffer(t->ptr, sizeof(mov_t) * MAX_PIECES);
 
   brd_t * brd = g_board;
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
@@ -54,7 +56,7 @@ void g3d_deinit(void) {
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    t->load_buffer(g_buf_mov, g_movs, sizeof(mov_t) * 20);
+    t->load_buffer(g_buf_mov, g_movs, sizeof(mov_t) * MAX_PIECES);
     t->load_buffer(g_buf_brd, g_board, sizeof(brd_t) * 20 * 20);
     g_board_loaded = 1;
   }
