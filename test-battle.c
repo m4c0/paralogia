@@ -6,6 +6,12 @@
 
 #define MAX_PIECES 20
 
+typedef struct pce_s {
+  int2 pos;
+} pce_t;
+static pce_t g_pces[MAX_PIECES] = {0};
+static unsigned g_pces_n;
+
 static glb_t g_glb;
 
 static mov_t g_movs[MAX_PIECES] = {0};
@@ -45,12 +51,19 @@ int g3d_init(const g3d_init_t * t) {
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
   brd[41] = brd[61] = brd[64] = (brd_t){ 1 };
   brd[42] = (brd_t) { 3 };
-  brd[81] = (brd_t) { 2 };
-  brd[104] = (brd_t) { 2 };
 
   g_movs[0] = (mov_t) { {3,5}, {8,5} };
   g_movs[1] = (mov_t) { {4,8}, {9,8} };
   g_movs_n = 2;
+
+  g_pces[0] = (pce_t) { {1,4} };
+  g_pces[1] = (pce_t) { {4,5} };
+  g_pces_n = 2;
+
+  for (int i = 0; i < g_pces_n; i++) {
+    pce_t p = g_pces[i];
+    brd[p.pos.y * g_glb.brd_sz.x + p.pos.x] = (brd_t){ 2 };
+  }
 
   return g_ppl_brd ? 0 : 1;
 }
