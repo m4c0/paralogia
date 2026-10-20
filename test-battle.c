@@ -9,6 +9,8 @@
 static glb_t g_glb;
 
 static mov_t g_movs[MAX_PIECES] = {0};
+static unsigned g_movs_n;
+
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
@@ -48,6 +50,7 @@ int g3d_init(const g3d_init_t * t) {
 
   g_movs[0] = (mov_t) { {3,5}, {8,5} };
   g_movs[1] = (mov_t) { {4,8}, {9,8} };
+  g_movs_n = 2;
 
   return g_ppl_brd ? 0 : 1;
 }
@@ -82,7 +85,7 @@ int g3d_frame(const g3d_frame_t * t) {
     .buffers   = (g3d_buffer_t *[]) { g_buf_glb, g_buf_mov, 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
-    .instances = 2,
+    .instances = g_movs_n,
   };
   t->render(&rnd);
 
