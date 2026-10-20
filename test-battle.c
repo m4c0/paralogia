@@ -6,9 +6,6 @@
 
 #define MAX_PIECES 20
 
-typedef struct pce_s {
-  int2 pos;
-} pce_t;
 static pce_t g_pces[MAX_PIECES] = {0};
 static unsigned g_pces_n;
 
@@ -20,12 +17,14 @@ static unsigned g_movs_n;
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
-static g3d_buffer_t * g_buf_glb;
 static g3d_buffer_t * g_buf_brd;
+static g3d_buffer_t * g_buf_glb;
 static g3d_buffer_t * g_buf_mov;
+static g3d_buffer_t * g_buf_pce;
 
 static g3d_pipeline_t * g_ppl_brd;
 static g3d_pipeline_t * g_ppl_mov;
+static g3d_pipeline_t * g_ppl_pce;
 
 static inline float clamp(float x, float a, float b) {
   if (x < a) return a;
@@ -36,6 +35,7 @@ static inline float clamp(float x, float a, float b) {
 int g3d_init(const g3d_init_t * t) {
   g_ppl_brd = t->new_pipeline(t->ptr, "test-battle.brd", 2, 0);
   g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 2, 0);
+  g_ppl_pce = t->new_pipeline(t->ptr, "test-battle.pce", 0, 0);
 
   g_buf_glb = t->new_buffer(t->ptr, sizeof(glb_t));
   g_glb.brd_sz = (int2){ 20, 20 };
@@ -46,6 +46,7 @@ int g3d_init(const g3d_init_t * t) {
 
   g_buf_brd = t->new_buffer(t->ptr, sizeof(brd_t) * 20 * 20);
   g_buf_mov = t->new_buffer(t->ptr, sizeof(mov_t) * MAX_PIECES);
+  g_buf_pce = t->new_buffer(t->ptr, sizeof(pce_t) * MAX_PIECES);
 
   brd_t * brd = g_board;
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
@@ -72,8 +73,9 @@ void g3d_deinit(void) {
 
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
-    t->load_buffer(g_buf_mov, g_movs, sizeof(mov_t) * MAX_PIECES);
     t->load_buffer(g_buf_brd, g_board, sizeof(brd_t) * 20 * 20);
+    t->load_buffer(g_buf_mov, g_movs, sizeof(mov_t) * MAX_PIECES);
+    t->load_buffer(g_buf_pce, g_pces, sizeof(pce_t) * MAX_PIECES);
     g_board_loaded = 1;
   }
 
@@ -99,6 +101,16 @@ int g3d_frame(const g3d_frame_t * t) {
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
     .instances = g_movs_n,
+  };
+  t->render(&rnd);
+
+  rnd = (g3d_frame_render_t) {
+    .ptr       = t->ptr,
+    .pipeline  = g_ppl_pce,
+    .buffers   = (g3d_buffer_t *[]) { g_buf_glb, g_buf_pce, 0 },
+    .samplers  = (g3d_sampler_t *[]) { 0 },
+    .textures  = (g3d_texture_t *[]) { 0 },
+    .instances = g_pces_n,
   };
   t->render(&rnd);
 

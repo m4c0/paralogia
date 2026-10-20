@@ -73,6 +73,7 @@ int main() {
 
   SHADER("test-battle.brd");
   SHADER("test-battle.mov");
+  SHADER("test-battle.pce");
 
 #if _WIN32
   RUN("llvm-rc", "/FO", "test-battle.res", "test-battle.rc");
