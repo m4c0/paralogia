@@ -2,10 +2,10 @@
 
 #if HLSL
 StructuredBuffer<glb_t> b0 : register(t0);
-StructuredBuffer<mov_t> b1 : register(t1);
+StructuredBuffer<pce_t> b1 : register(t1);
 #endif
 #define B0 B(const device glb_t * b0)
-#define B1 B(const device mov_t * b1)
+#define B1 B(const device pce_t * b1)
 
 struct vs_out {
   float2 pp  LOC(0);
@@ -20,8 +20,8 @@ struct fs_out {
 vertex vs_out vs_main(B0 B1 uint vid VID, uint iid IID) {
   float2 fp = float2(vid & 1, (vid >> 1) & 1);
 
-  float2 p0 = float2(b1[iid].from) + 0.5;
-  float2 p1 = float2(b1[iid].to) + 0.5;
+  float2 p0 = float2(b1[iid].pos) + 0.5;
+  float2 p1 = float2(b1[iid].target) + 0.5;
   float2 aa = min(p0, p1) - 0.5;
   float2 bb = max(p0, p1) + 0.5;
 
@@ -29,6 +29,8 @@ vertex vs_out vs_main(B0 B1 uint vid VID, uint iid IID) {
   float ax = aspect(b0[0].scr_sz.x, b0[0].scr_sz.y);
   float ay = aspect(b0[0].scr_sz.y, b0[0].scr_sz.x);
   float2 qq = (pp - b0[0].trans) / (b0[0].scale * float2(ax, ay));
+
+  if (all(b1[iid].pos == b1[iid].target)) qq = float2(0, 0);
 
   vs_out res;
   res.p0 = p0;

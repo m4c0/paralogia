@@ -11,15 +11,11 @@ static unsigned g_pces_n;
 
 static glb_t g_glb;
 
-static mov_t g_movs[MAX_PIECES] = {0};
-static unsigned g_movs_n;
-
 static brd_t g_board[20 * 20] = {0};
 static int g_board_loaded;
 
 static g3d_buffer_t * g_buf_brd;
 static g3d_buffer_t * g_buf_glb;
-static g3d_buffer_t * g_buf_mov;
 static g3d_buffer_t * g_buf_pce;
 
 static g3d_pipeline_t * g_ppl_brd;
@@ -45,20 +41,15 @@ int g3d_init(const g3d_init_t * t) {
   g_glb.trans = (float2){ 3, 3 };
 
   g_buf_brd = t->new_buffer(t->ptr, sizeof(brd_t) * 20 * 20);
-  g_buf_mov = t->new_buffer(t->ptr, sizeof(mov_t) * MAX_PIECES);
   g_buf_pce = t->new_buffer(t->ptr, sizeof(pce_t) * MAX_PIECES);
 
   brd_t * brd = g_board;
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
   brd[41] = brd[61] = brd[64] = (brd_t){ 1 };
 
-  g_movs[0] = (mov_t) { {3,5}, {8,5} };
-  g_movs[1] = (mov_t) { {4,8}, {9,8} };
-  g_movs_n = 2;
-
-  g_pces[0] = (pce_t) { {1,4}, 2 };
-  g_pces[1] = (pce_t) { {4,5}, 2 };
-  g_pces[2] = (pce_t) { {2,2}, 3 };
+  g_pces[0] = (pce_t) { {1,4}, {1,4}, 2 };
+  g_pces[1] = (pce_t) { {4,5}, {4,5}, 2 };
+  g_pces[2] = (pce_t) { {2,2}, {2,2}, 3 };
   g_pces_n = 3;
 
   for (int i = 0; i < g_pces_n; i++) {
@@ -77,7 +68,6 @@ void g3d_deinit(void) {
 int g3d_frame(const g3d_frame_t * t) {
   if (!g_board_loaded) {
     t->load_buffer(g_buf_brd, g_board, sizeof(brd_t) * 20 * 20);
-    t->load_buffer(g_buf_mov, g_movs, sizeof(mov_t) * MAX_PIECES);
     t->load_buffer(g_buf_pce, g_pces, sizeof(pce_t) * MAX_PIECES);
     g_board_loaded = 1;
   }
@@ -100,10 +90,10 @@ int g3d_frame(const g3d_frame_t * t) {
   rnd = (g3d_frame_render_t) {
     .ptr       = t->ptr,
     .pipeline  = g_ppl_mov,
-    .buffers   = (g3d_buffer_t *[]) { g_buf_glb, g_buf_mov, 0 },
+    .buffers   = (g3d_buffer_t *[]) { g_buf_glb, g_buf_pce, 0 },
     .samplers  = (g3d_sampler_t *[]) { 0 },
     .textures  = (g3d_texture_t *[]) { 0 },
-    .instances = g_movs_n,
+    .instances = g_pces_n,
   };
   t->render(&rnd);
 

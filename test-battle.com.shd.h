@@ -20,6 +20,7 @@ typedef struct mov_s {
 } mov_t;
 typedef struct pce_s {
   int2 pos;
+  int2 target;
   int  piece;
   int  pad;
 } pce_t;
