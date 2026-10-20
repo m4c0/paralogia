@@ -12,6 +12,7 @@ typedef struct glb_s {
 
 typedef struct brd_s {
   int piece;
+  int index;
 } brd_t;
 typedef struct mov_s {
   int2 from;

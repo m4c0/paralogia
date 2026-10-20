@@ -63,7 +63,10 @@ int g3d_init(const g3d_init_t * t) {
 
   for (int i = 0; i < g_pces_n; i++) {
     pce_t p = g_pces[i];
-    brd[p.pos.y * g_glb.brd_sz.x + p.pos.x] = (brd_t){ 2 };
+    brd[p.pos.y * g_glb.brd_sz.x + p.pos.x] = (brd_t){
+      .piece = p.piece,
+      .index = i,
+    };
   }
 
   return g_ppl_brd ? 0 : 1;
@@ -188,11 +191,13 @@ void g3d_mouse_up(int x, int y) {
   unsigned j = g_glb.brd_sz.x * g_glb.mouse.y + g_glb.mouse.x;
   switch (g_board[j].piece) {
     case 0:
+      g_pces[g_board[i].index].pos = g_glb.mouse;
       g_board[j] = g_board[i];
       g_board[i] = (brd_t){ 0 };
       g_board_loaded = 0;
       break;
     case 3:
+      g_pces[g_board[j].index].piece = 0;
       g_board[j] = (brd_t){ 0 };
       g_board_loaded = 0;
       break;
