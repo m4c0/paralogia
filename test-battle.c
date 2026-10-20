@@ -51,15 +51,15 @@ int g3d_init(const g3d_init_t * t) {
   brd_t * brd = g_board;
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
   brd[41] = brd[61] = brd[64] = (brd_t){ 1 };
-  brd[42] = (brd_t) { 3 };
 
   g_movs[0] = (mov_t) { {3,5}, {8,5} };
   g_movs[1] = (mov_t) { {4,8}, {9,8} };
   g_movs_n = 2;
 
-  g_pces[0] = (pce_t) { {1,4} };
-  g_pces[1] = (pce_t) { {4,5} };
-  g_pces_n = 2;
+  g_pces[0] = (pce_t) { {1,4}, 2 };
+  g_pces[1] = (pce_t) { {4,5}, 2 };
+  g_pces[2] = (pce_t) { {2,2}, 3 };
+  g_pces_n = 3;
 
   for (int i = 0; i < g_pces_n; i++) {
     pce_t p = g_pces[i];

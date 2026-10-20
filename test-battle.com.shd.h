@@ -19,6 +19,8 @@ typedef struct mov_s {
 } mov_t;
 typedef struct pce_s {
   int2 pos;
+  int  piece;
+  int  pad;
 } pce_t;
 
 static inline float aspect(float a, float b) {

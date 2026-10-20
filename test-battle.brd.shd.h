@@ -56,8 +56,6 @@ static inline float3 c_inside(B1 float3 c, float2 p, glb_t vsin) {
   uint i = id.y * uint(vsin.brd_sz.x) + id.x;
   switch (b1[i].piece) {
     case 1: c = 0.3; break;
-    case 2: c = mix(0.5, c, step(0, length(uv) - 0.3)); break;
-    case 3: c = mix(0.8, c, step(0, length(uv) - 0.3)); break;
   }
 
   return c;
