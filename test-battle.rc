@@ -1,4 +1,4 @@
-test-battle vert "test-battle.vert.dxil"
-test-battle frag "test-battle.frag.dxil"
+test-battle.brd vert "test-battle.brd.vert.dxil"
+test-battle.brd frag "test-battle.brd.frag.dxil"
 test-battle.mov vert "test-battle.mov.vert.dxil"
 test-battle.mov frag "test-battle.mov.frag.dxil"

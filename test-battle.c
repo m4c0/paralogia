@@ -34,7 +34,7 @@ static inline float clamp(float x, float a, float b) {
 }
 
 int g3d_init(const g3d_init_t * t) {
-  g_ppl_brd = t->new_pipeline(t->ptr, "test-battle", 2, 0);
+  g_ppl_brd = t->new_pipeline(t->ptr, "test-battle.brd", 2, 0);
   g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 2, 0);
 
   g_buf_glb = t->new_buffer(t->ptr, sizeof(glb_t));

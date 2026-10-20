@@ -71,7 +71,7 @@ int main() {
   RUN("clang", "-Wall", "-gdwarf", "-c", "-o", "app.o", "app-win.c");
 #endif
 
-  SHADER("test-battle");
+  SHADER("test-battle.brd");
   SHADER("test-battle.mov");
 
 #if _WIN32
