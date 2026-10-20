@@ -179,16 +179,11 @@ void g3d_mouse_up(int x, int y) {
 
   unsigned i = g_glb.brd_sz.x * g_glb.pick.y + g_glb.pick.x;
   unsigned j = g_glb.brd_sz.x * g_glb.mouse.y + g_glb.mouse.x;
+
   switch (g_board[j].piece) {
     case 0:
-      g_pces[g_board[i].index].pos = g_glb.mouse;
-      g_board[j] = g_board[i];
-      g_board[i] = (brd_t){ 0 };
-      g_board_loaded = 0;
-      break;
     case 3:
-      g_pces[g_board[j].index].piece = 0;
-      g_board[j] = (brd_t){ 0 };
+      g_pces[g_board[i].index].target = g_glb.mouse;
       g_board_loaded = 0;
       break;
   }
