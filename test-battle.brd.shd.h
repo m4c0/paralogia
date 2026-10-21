@@ -67,7 +67,10 @@ fragment fs_out fs_main(B0 B1 vs_out vs IN) {
   float3 c = float3(0.05, 0.10, 0.15);
   c = c_inside(B(b1) c, p, b0[0]);
 
+  float4 c4 = float4(c, 1);
+  c4 = c_movement(c4, p, b0[0].pick, b0[0].mouse);
+
   fs_out res;
-  res.colour = float4(c, 1);
+  res.colour = c4;
   return res;
 }
