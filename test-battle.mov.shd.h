@@ -41,7 +41,7 @@ vertex vs_out vs_main(B0 B1 uint vid VID, uint iid IID) {
 }
 
 fragment fs_out fs_main(vs_out vs IN) {
-  float4 c = float4(0);
+  float4 c = float4(0, 0, 0, 0);
   c = c_movement(c, vs.pp, vs.p0, vs.p1);
 
   fs_out res;
