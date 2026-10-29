@@ -27,6 +27,12 @@ static inline float clamp(float x, float a, float b) {
   if (x > b) return b;
   return x;
 }
+static inline brd_t * xy2brd(int x, int y) {
+  return g_board + x + g_glb.brd_sz.x * y;
+}
+static inline brd_t * p2brd(int2 p) {
+  return xy2brd(p.x, p.y);
+}
 
 int g3d_init(const g3d_init_t * t) {
   g_ppl_brd = t->new_pipeline(t->ptr, "test-battle.brd", 2, 0);
@@ -54,7 +60,7 @@ int g3d_init(const g3d_init_t * t) {
 
   for (int i = 0; i < g_pces_n; i++) {
     pce_t p = g_pces[i];
-    brd[p.pos.y * g_glb.brd_sz.x + p.pos.x] = (brd_t){
+    *p2brd(p.pos) = (brd_t){
       .piece = p.piece,
       .index = i,
     };
@@ -147,8 +153,8 @@ void g3d_mouse_move(int x, int y) {
   for (int d = 1; valid && d <= abs(dx + dy); d++) {
     int ix = g_glb.pick.x + d * sx;
     int iy = g_glb.pick.y + d * sy;
-    int i = ix + g_glb.brd_sz.x * iy;
-    switch (g_board[i].piece) {
+    brd_t * b = xy2brd(ix, iy);
+    switch (b->piece) {
       case 1:
       case 2: valid = 0; break;
       default: break;
@@ -166,8 +172,8 @@ void g3d_mouse_down(int x, int y) {
   g_glb.pick = frag_scr_id(p);
   if (g_glb.pick.x < 0) return;
 
-  brd_t id = g_board[g_glb.brd_sz.x * g_glb.pick.y + g_glb.pick.x];
-  if (id.piece == 2) {
+  brd_t * id = p2brd(g_glb.pick);
+  if (id->piece == 2) {
     g_glb.mouse = (int2){ -1, -1 };
     return;
   }
@@ -177,13 +183,13 @@ void g3d_mouse_down(int x, int y) {
 void g3d_mouse_up(int x, int y) {
   if (g_glb.pick.x < 0 || g_glb.mouse.x < 0) return cancel();
 
-  unsigned i = g_glb.brd_sz.x * g_glb.pick.y + g_glb.pick.x;
-  unsigned j = g_glb.brd_sz.x * g_glb.mouse.y + g_glb.mouse.x;
+  brd_t * pick  = p2brd(g_glb.pick);
+  brd_t * mouse = p2brd(g_glb.mouse);
 
-  switch (g_board[j].piece) {
+  switch (mouse->piece) {
     case 0:
     case 3:
-      g_pces[g_board[i].index].target = g_glb.mouse;
+      g_pces[pick->index].target = g_glb.mouse;
       g_board_loaded = 0;
       break;
   }
@@ -198,7 +204,7 @@ static void place(int who) {
   if (g_glb.mouse.x < 0) return;
   if (who > 3) return;
 
-  g_board[g_glb.brd_sz.x * g_glb.mouse.y + g_glb.mouse.x] = (brd_t){ who };
+  *p2brd(g_glb.mouse) = (brd_t){ who };
   g_board_loaded = 0;
 }
 void g3d_key(g3d_key_t key, int down) {
