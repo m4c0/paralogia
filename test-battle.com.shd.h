@@ -22,7 +22,7 @@ typedef struct pce_s {
   int2 pos;
   int2 target;
   int  piece;
-  int  pad;
+  int  order;
 } pce_t;
 
 static inline float aspect(float a, float b) {

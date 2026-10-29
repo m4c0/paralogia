@@ -54,9 +54,9 @@ int g3d_init(const g3d_init_t * t) {
   brd[21] = brd[22] = brd[23] = brd[24] = (brd_t){ 1 };
   brd[41] = brd[61] = brd[64] = (brd_t){ 1 };
 
-  g_pces[0] = (pce_t) { {1,4}, {1,4}, 2 };
-  g_pces[1] = (pce_t) { {4,5}, {4,5}, 2 };
-  g_pces[2] = (pce_t) { {2,2}, {2,2}, 3 };
+  g_pces[0] = (pce_t) { {1,4}, {1,4}, 2, 1 };
+  g_pces[1] = (pce_t) { {4,5}, {4,5}, 2, 2 };
+  g_pces[2] = (pce_t) { {2,2}, {2,2}, 3, 3 };
   g_pces_n = 3;
 
   for (int i = 0; i < g_pces_n; i++) {
