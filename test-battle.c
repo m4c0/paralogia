@@ -27,6 +27,7 @@ static inline float clamp(float x, float a, float b) {
   if (x > b) return b;
   return x;
 }
+
 static inline brd_t * xy2brd(int x, int y) {
   return g_board + x + g_glb.brd_sz.x * y;
 }
@@ -150,6 +151,15 @@ void g3d_mouse_move(int x, int y) {
   }
 
   int valid = 1;
+
+  brd_t * pick  = p2brd(g_glb.pick);
+  brd_t * mouse = p2brd(g_glb.mouse);
+  for (int i = 0; valid && i < g_pces_n; i++) {
+    pce_t * piece = g_pces + i;
+    if (p2brd(piece->pos) == pick) continue;
+    if (p2brd(piece->target) == mouse) valid = 0;
+  }
+
   for (int d = 1; valid && d <= abs(dx + dy); d++) {
     int ix = g_glb.pick.x + d * sx;
     int iy = g_glb.pick.y + d * sy;
