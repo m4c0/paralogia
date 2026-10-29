@@ -204,7 +204,29 @@ static void place(int who) {
   if (g_glb.mouse.x < 0) return;
   if (who > 3) return;
 
-  *p2brd(g_glb.mouse) = (brd_t){ who };
+  brd_t * m = p2brd(g_glb.mouse);
+  if (who == 0) {
+    if (!m->piece) return;
+
+    pce_t * p = g_pces + m->index;
+    if (p->piece == m->piece) *p = (pce_t) {0}; // Avoid wall impacting piece
+
+    m->piece = 0;
+  } else if (m->piece) {
+    return;
+  } else if (who == 1) {
+    *m = (brd_t){
+      .piece = who,
+    };
+  } else {
+    g_pces[g_pces_n] = (pce_t) { g_glb.mouse, g_glb.mouse, who };
+    *m = (brd_t){
+      .piece = who,
+      .index = g_pces_n,
+    };
+    g_pces_n++;
+  }
+
   g_board_loaded = 0;
 }
 void g3d_key(g3d_key_t key, int down) {
