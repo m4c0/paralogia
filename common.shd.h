@@ -8,6 +8,7 @@
 #  define B(...)
 #  define vertex   [shader("vertex")]
 #  define fragment [shader("pixel")]
+#  define constant static const
 #  define fract frac
 #  define mix   lerp
 #elif METAL

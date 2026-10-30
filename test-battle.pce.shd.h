@@ -32,6 +32,9 @@ vertex vs_out vs_main(B0 B1 uint vid VID, uint iid IID) {
   return res;
 }
 
+constant uint digits[10] = {
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 fragment fs_out fs_main(vs_out vs IN) {
   float2 p = vs.frag_pos;
   float4 c = float4(0, 0, 0, 0);
