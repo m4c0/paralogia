@@ -145,15 +145,17 @@ void g3d_mouse_move(int x, int y) {
   int dy = g_glb.mouse.y - g_glb.pick.y;
   int sx = sign(dx);
   int sy = sign(dy);
-  if ((sx && sy) || (!sx && !sy)) {
+  if (sx && sy) {
     g_glb.mouse = (int2){ -1, -1 };
     return;
   }
 
-  int valid = 1;
-
   brd_t * pick  = p2brd(g_glb.pick);
   brd_t * mouse = p2brd(g_glb.mouse);
+  if (pick == mouse) return;
+
+  int valid = 1;
+
   for (int i = 0; valid && i < g_pces_n; i++) {
     pce_t * piece = g_pces + i;
     if (p2brd(piece->pos) == pick) continue;
@@ -196,12 +198,21 @@ void g3d_mouse_up(int x, int y) {
   brd_t * pick  = p2brd(g_glb.pick);
   brd_t * mouse = p2brd(g_glb.mouse);
 
+  int valid = 0;
   switch (mouse->piece) {
     case 0:
     case 3:
-      g_pces[pick->index].target = g_glb.mouse;
-      g_board_loaded = 0;
+      valid = 1;
       break;
+    case 2:
+      valid = 1;
+      //if (pick == mouse) valid = 1;
+      break;
+  }
+
+  if (valid) {
+    g_pces[pick->index].target = g_glb.mouse;
+    g_board_loaded = 0;
   }
 
   cancel();
