@@ -47,20 +47,27 @@ constant uint digits[10] = {
   DIG(7, 5, 7, 5, 7),
   DIG(7, 5, 7, 1, 7),
 };
-static inline float4 c_order(float4 c, float2 p, uint order) {
+static inline float4 c_order_digit(float4 c, float2 p, uint n, uint order) {
   float2 bmp_sz = float2(5, 3);
   float2 dig_sz = bmp_sz * 1.5;
 
-  p = p * dig_sz - (dig_sz - float2(1.6, 1.4));
+  p = p * dig_sz - (dig_sz - float2(1.6, 1.4) - float2(n * 3, 0));
   if (!all(abs(p) <= 1)) return c;
 
   p = p * 0.5 + 0.5;
-  uint2 xy = uint2(floor(p * float2(3, 5)));
+  uint2 xy = uint2(floor(p * bmp_sz.yx));
 
   uint bmp = digits[order < 9 ? order : 9];
   uint b = (bmp >> (xy.y * 3 + 2 - xy.x)) & 1;
 
   c = float4(1, 1, 1, b);
+  return c;
+}
+static inline float4 c_order(float4 c, float2 p, uint order) {
+  if (order >= 1000) order = 999;
+  c = c_order_digit(c, p, 0, order % 10);
+  order /= 10; if (order > 0) c = c_order_digit(c, p, 1, order % 10);
+  order /= 10; if (order > 0) c = c_order_digit(c, p, 2, order % 10);
   return c;
 }
 fragment fs_out fs_main(vs_out vs IN) {
