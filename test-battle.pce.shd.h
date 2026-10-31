@@ -48,7 +48,10 @@ constant uint digits[10] = {
   DIG(7, 5, 7, 1, 7),
 };
 static inline float4 c_order(float4 c, float2 p, uint order) {
-  p = p * float2(5, 3) * 2 - float2(5 * 2 - 1.3, 3 * 2 - 1.2);
+  float2 bmp_sz = float2(5, 3);
+  float2 dig_sz = bmp_sz * 1.5;
+
+  p = p * dig_sz - (dig_sz - float2(1.6, 1.4));
   if (!all(abs(p) <= 1)) return c;
 
   p = p * 0.5 + 0.5;
