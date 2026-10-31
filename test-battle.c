@@ -252,7 +252,16 @@ static void place(int who) {
       .piece = who,
     };
   } else {
-    g_pces[g_pces_n] = (pce_t) { g_glb.mouse, g_glb.mouse, who };
+    int order = 1;
+    for (int i = 0; i < g_pces_n; i++) {
+      if (g_pces[i].order >= order) order = g_pces[i].order + 1;
+    }
+    g_pces[g_pces_n] = (pce_t) {
+      .pos    = g_glb.mouse,
+      .target = g_glb.mouse,
+      .piece  = who,
+      .order  = order,
+    };
     *m = (brd_t){
       .piece = who,
       .index = g_pces_n,

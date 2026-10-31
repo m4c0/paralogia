@@ -36,11 +36,16 @@ vertex vs_out vs_main(B0 B1 uint vid VID, uint iid IID) {
 
 #define DIG(a, b, c, d, e) ((a) | (b << 3) | (c << 6) | (d << 9) | (e << 12))
 constant uint digits[10] = {
-  0,
+  DIG(7, 5, 5, 5, 7),
   DIG(6, 2, 2, 2, 7),
   DIG(7, 1, 7, 4, 7),
   DIG(7, 1, 7, 1, 7),
-  0, 0, 0, 0, 0, 0
+  DIG(1, 5, 7, 1, 1),
+  DIG(7, 4, 7, 1, 7),
+  DIG(7, 4, 7, 5, 7),
+  DIG(7, 1, 3, 1, 1),
+  DIG(7, 5, 7, 5, 7),
+  DIG(7, 5, 7, 1, 7),
 };
 static inline float4 c_order(float4 c, float2 p, uint order) {
   p = p * float2(5, 3) - float2(4 - 0.3, 2 - 0.2);
