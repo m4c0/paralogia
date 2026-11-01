@@ -197,10 +197,7 @@ void g3d_mouse_down(int x, int y) {
   if (g_glb.pick.x < 0) return;
 
   pce_t * id = p2pce(g_glb.pick);
-  if (id && id->piece == 2) {
-    g_glb.mouse = (int2){ -1, -1 };
-    return;
-  }
+  if (id && id->piece == 2) return;
 
   g_glb.pick = (int2){ -1, -1 };
 }
