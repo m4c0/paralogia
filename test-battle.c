@@ -28,6 +28,13 @@ static inline float clamp(float x, float a, float b) {
   return x;
 }
 
+static inline int i2eq(int2 a, int2 b) {
+  return a.x == b.x && a.y == b.y;
+}
+static inline int2 i2sub(int2 a, int2 b) {
+  return (int2) { a.x - b.x, a.y - b.y };
+}
+
 static inline brd_t * xy2brd(int x, int y) {
   return g_board + x + g_glb.brd_sz.x * y;
 }
@@ -160,18 +167,36 @@ void g3d_mouse_move(int x, int y) {
     return;
   }
 
-  brd_t * pick  = p2brd(g_glb.pick);
-  brd_t * mouse = p2brd(g_glb.mouse);
-  if (pick == mouse) return;
+  if (i2eq(g_glb.pick, g_glb.mouse)) return;
 
   int valid = 1;
 
+  pce_t * pick = p2pce(g_glb.pick);
   for (int i = 0; valid && i < g_pces_n; i++) {
-    pce_t * piece = g_pces + i;
-    if (p2brd(piece->pos) == pick) continue;
-    if (p2brd(piece->target) == mouse) valid = 0;
+    pce_t * p = &g_pces[i];
+    if (pick == p) continue;
 
-    if (intersects(piece->pos, piece->target, g_glb.pick, g_glb.mouse)) valid = 0;
+    int2 a, b, c;
+    if (pick->order < p->order) {
+      a = p->pos;
+      b = p->target;
+      c = g_glb.mouse;
+    } else {
+      a = pick->pos;
+      b = g_glb.mouse;
+      c = p->target;
+    }
+
+    int2 ab = i2sub(b, a);
+    int2 ac = i2sub(c, a);
+    if (ab.x * ac.y != ab.y * ac.x) continue;
+    
+    int ab_dot_ab = ab.x * ab.x + ab.y * ab.y;
+    int ab_dot_ac = ab.x * ac.x + ab.y * ac.y;
+    if (ab_dot_ac < 0) continue;
+    if (ab_dot_ac > ab_dot_ab) continue;
+
+    valid = 0;
   }
 
   for (int d = 1; valid && d <= abs(dx + dy); d++) {
