@@ -40,7 +40,7 @@ static int run(char ** args) {
 #define RUN(...) do { char * args[] = { __VA_ARGS__, 0 }; if (run(args)) return 1; } while (0)
 
 #ifdef __APPLE__
-#  define SHADER(x) RUN("xcrun", "-sdk", "macosx", "metal", "-DMETAL", "-x", "metal", x".shd.h", "-o", "app.app/Contents/Resources/"x".metallib");
+#  define SHADER(x) RUN("xcrun", "-sdk", "macosx", "metal", "-DMETAL", "-x", "metal", x".shd.h", "-o", "out/app.app/Contents/Resources/"x".metallib");
 #elif _WIN32
 static char * dxc(void) {
   char * win_kit_version = getenv("WIN_KIT_VERSION");
@@ -53,22 +53,24 @@ static char * dxc(void) {
   return strdup(argv0);
 }
 #define SHADER(x) \
-  RUN(dxc(), "-D", "HLSL", "-T", "vs_5_0", "-E", "vs_main", x".shd.h", "-Fo", x".vert.dxil"); \
-  RUN(dxc(), "-D", "HLSL", "-T", "ps_5_0", "-E", "fs_main", x".shd.h", "-Fo", x".frag.dxil");
+  RUN(dxc(), "-D", "HLSL", "-T", "vs_5_0", "-E", "vs_main", x".shd.h", "-Fo", "out/"x".vert.dxil"); \
+  RUN(dxc(), "-D", "HLSL", "-T", "ps_5_0", "-E", "fs_main", x".shd.h", "-Fo", "out/"x".frag.dxil");
 #endif
 
 int main() {
 #ifdef __APPLE__
-#define EXE(x) "app.app/Contents/MacOS/"x
-  mkdir("app.app", 0777);
-  mkdir("app.app/Contents", 0777);
-  mkdir("app.app/Contents/MacOS", 0777);
-  mkdir("app.app/Contents/Resources", 0777);
+#define EXE(x) "out/app.app/Contents/MacOS/"x
+  mkdir("out", 0777);
+  mkdir("out/app.app", 0777);
+  mkdir("out/app.app/Contents", 0777);
+  mkdir("out/app.app/Contents/MacOS", 0777);
+  mkdir("out/app.app/Contents/Resources", 0777);
 
-  RUN("clang", "-Wall", "-g", "-fmodules", "-c", "-o", "app.o", "app-osx.m");
+  RUN("clang", "-Wall", "-g", "-fmodules", "-c", "-o", "out/app.o", "app-osx.m");
 #elif _WIN32
-#define EXE(x) x".exe", x".res"
-  RUN("clang", "-Wall", "-gdwarf", "-c", "-o", "app.o", "app-win.c");
+#define EXE(x) "out/"x".exe", "out/"x".res"
+  mkdir("out");
+  RUN("clang", "-Wall", "-gdwarf", "-c", "-o", "out/app.o", "app-win.c");
 #endif
 
   SHADER("test-battle.brd");
@@ -76,11 +78,11 @@ int main() {
   SHADER("test-battle.pce");
 
 #if _WIN32
-  RUN("llvm-rc", "/FO", "test-battle.res", "test-battle.rc");
+  RUN("llvm-rc", "/FO", "out/test-battle.res", "test-battle.rc");
 #endif
 
-  RUN("clang", "-Wall", "-g", "-c", "-o", "test-battle.o", "test-battle.c");
-  RUN("clang", "-o", EXE("test-battle"), "app.o", "test-battle.o");
+  RUN("clang", "-Wall", "-g", "-c", "-o", "out/test-battle.o", "test-battle.c");
+  RUN("clang", "-o", EXE("test-battle"), "out/app.o", "out/test-battle.o");
   return 0;
 }
 
