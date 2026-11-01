@@ -47,7 +47,7 @@ static inline pce_t * p2pce(int2 p) {
     pce_t * pce = &g_pces[i];
     if (p.x == pce->pos.x && p.y == pce->pos.y) return pce;
   }
-  return NULL;
+  return 0;
 }
 
 int g3d_init(const g3d_init_t * t) {
