@@ -178,12 +178,9 @@ void g3d_mouse_move(int x, int y) {
     int ix = g_glb.pick.x + d * sx;
     int iy = g_glb.pick.y + d * sy;
     brd_t * b = xy2brd(ix, iy);
-    switch (b->piece) {
-      case 1:
-      case 2: valid = 0; break;
-      default: break;
-    }
+    if (b->piece) valid = 0; break;
   }
+
   if (!valid) {
     g_glb.mouse = (int2){ -1, -1 };
     return;
