@@ -35,6 +35,14 @@ static inline brd_t * p2brd(int2 p) {
   return xy2brd(p.x, p.y);
 }
 
+static inline pce_t * p2pce(int2 p) {
+  for (int i = 0; i < g_pces_n; i++) {
+    pce_t * pce = &g_pces[i];
+    if (p.x == pce->pos.x && p.y == pce->pos.y) return pce;
+  }
+  return NULL;
+}
+
 int g3d_init(const g3d_init_t * t) {
   g_ppl_brd = t->new_pipeline(t->ptr, "test-battle.brd", 2, 0);
   g_ppl_mov = t->new_pipeline(t->ptr, "test-battle.mov", 2, 0);
@@ -58,14 +66,6 @@ int g3d_init(const g3d_init_t * t) {
   g_pces[1] = (pce_t) { {4,5}, {4,5}, 2, 21 };
   g_pces[2] = (pce_t) { {2,2}, {2,2}, 3, 32 };
   g_pces_n = 3;
-
-  for (int i = 0; i < g_pces_n; i++) {
-    pce_t p = g_pces[i];
-    *p2brd(p.pos) = (brd_t){
-      .piece = p.piece,
-      .index = i,
-    };
-  }
 
   return g_ppl_brd ? 0 : 1;
 }
@@ -207,8 +207,8 @@ void g3d_mouse_down(int x, int y) {
 void g3d_mouse_up(int x, int y) {
   if (g_glb.pick.x < 0 || g_glb.mouse.x < 0) return cancel();
 
-  brd_t * pick  = p2brd(g_glb.pick);
-  brd_t * mouse = p2brd(g_glb.mouse);
+  pce_t * pick  = p2pce(g_glb.pick);
+  pce_t * mouse = p2pce(g_glb.mouse);
 
   int valid = 0;
   switch (mouse->piece) {
@@ -223,7 +223,7 @@ void g3d_mouse_up(int x, int y) {
   }
 
   if (valid) {
-    g_pces[pick->index].target = g_glb.mouse;
+    pick->target = g_glb.mouse;
     g_board_loaded = 0;
   }
 
@@ -237,20 +237,13 @@ static void place(int who) {
   if (g_glb.mouse.x < 0) return;
   if (who > 3) return;
 
-  brd_t * m = p2brd(g_glb.mouse);
-  if (who == 0) {
-    if (!m->piece) return;
-
-    pce_t * p = g_pces + m->index;
-    if (p->piece == m->piece) *p = (pce_t) {0}; // Avoid wall impacting piece
-
-    m->piece = 0;
-  } else if (m->piece) {
-    return;
-  } else if (who == 1) {
-    *m = (brd_t){
-      .piece = who,
-    };
+  pce_t * m = p2pce(g_glb.mouse);
+  if (who == 0 || who == 1) {
+    if (m) *m = (pce_t){ {-1,-1}, {-1,-1}, 0, 0 }; // TODO: compact array
+    *p2brd(g_glb.mouse) = (brd_t){ who };
+  } else if (m) {
+    m->target = m->pos;
+    m->piece  = who;
   } else {
     int order = 1;
     for (int i = 0; i < g_pces_n; i++) {
@@ -261,10 +254,6 @@ static void place(int who) {
       .target = g_glb.mouse,
       .piece  = who,
       .order  = order,
-    };
-    *m = (brd_t){
-      .piece = who,
-      .index = g_pces_n,
     };
     g_pces_n++;
   }
