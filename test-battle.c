@@ -196,8 +196,8 @@ void g3d_mouse_down(int x, int y) {
   g_glb.pick = frag_scr_id(p);
   if (g_glb.pick.x < 0) return;
 
-  brd_t * id = p2brd(g_glb.pick);
-  if (id->piece == 2) {
+  pce_t * id = p2pce(g_glb.pick);
+  if (id && id->piece == 2) {
     g_glb.mouse = (int2){ -1, -1 };
     return;
   }
@@ -207,25 +207,9 @@ void g3d_mouse_down(int x, int y) {
 void g3d_mouse_up(int x, int y) {
   if (g_glb.pick.x < 0 || g_glb.mouse.x < 0) return cancel();
 
-  pce_t * pick  = p2pce(g_glb.pick);
-  pce_t * mouse = p2pce(g_glb.mouse);
-
-  int valid = 0;
-  switch (mouse->piece) {
-    case 0:
-    case 3:
-      valid = 1;
-      break;
-    case 2:
-      valid = 1;
-      //if (pick == mouse) valid = 1;
-      break;
-  }
-
-  if (valid) {
-    pick->target = g_glb.mouse;
-    g_board_loaded = 0;
-  }
+  pce_t * pick = p2pce(g_glb.pick);
+  pick->target = g_glb.mouse;
+  g_board_loaded = 0;
 
   cancel();
 }
