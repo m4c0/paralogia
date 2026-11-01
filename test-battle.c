@@ -140,16 +140,6 @@ static void cancel() {
   g_glb.pick = (int2){ -1, -1 };
 }
 
-// https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
-static inline int ccw(int2 a, int2 b, int2 c) {
-  return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
-}
-static inline int intersects(int2 a1, int2 a2, int2 b1, int2 b2) {
-  return
-    ccw(a1, b1, b2) != ccw(a2, b1, b2) &&
-    ccw(a1, a2, b1) != ccw(a1, a2, b2);
-}
-
 static inline int abs(int n) { return n > 0 ? n : -n; }
 static inline int sign(int n) { return n < 0 ? -1 : n > 0 ? 1 : 0; }
 void g3d_mouse_move(int x, int y) {
@@ -167,8 +157,6 @@ void g3d_mouse_move(int x, int y) {
     return;
   }
 
-  if (i2eq(g_glb.pick, g_glb.mouse)) return;
-
   int valid = 1;
 
   pce_t * pick = p2pce(g_glb.pick);
@@ -185,6 +173,11 @@ void g3d_mouse_move(int x, int y) {
       a = pick->pos;
       b = g_glb.mouse;
       c = p->target;
+    }
+
+    if (i2eq(a, b)) {
+      valid = !i2eq(a, c);
+      continue;
     }
 
     int2 ab = i2sub(b, a);
