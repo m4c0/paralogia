@@ -239,12 +239,17 @@ static void place(int who) {
 
   pce_t * m = p2pce(g_glb.mouse);
   if (who == 0 || who == 1) {
-    if (m) *m = (pce_t){ {-1,-1}, {-1,-1}, 0, 0 }; // TODO: compact array
+    if (m) {
+      for (; m && m != &g_pces[g_pces_n - 1]; m++) *m = *(m + 1);
+      g_pces_n--;
+    }
     *p2brd(g_glb.mouse) = (brd_t){ who };
   } else if (m) {
     m->target = m->pos;
     m->piece  = who;
   } else {
+    *p2brd(g_glb.mouse) = (brd_t){ 0 };
+
     int order = 1;
     for (int i = 0; i < g_pces_n; i++) {
       if (g_pces[i].order >= order) order = g_pces[i].order + 1;
